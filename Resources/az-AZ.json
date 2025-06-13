@@ -7,5 +7,11 @@
   "CLI.UnknownCommand": "Naməlum əmr. İstifadə üçün --help yazın.",
   "CLI.MissingProjectPath": "Layihə yolu göstərilməyib.",
   "CLI.MissingDirectory": "Qovluq tapılmadı: {0}",
-  "CLI.LanguageSet": "Dil seçildi: {0}"
+  "CLI.LanguageSet": "Dil seçildi: {0}",
+  "CLI.TestsPassed": "Uğurlu testlər: {0}",
+  "CLI.TestsFailed": "Səhv testlər: {0}",
+  "CLI.TestsSkipped": "Keçirilən testlər: {0}",
+  "CLI.TestsTotal": "Cəmi testlər: {0}",
+  "CLI.TestsDuration": "Müddət: {0}",
+  "CLI.TestErrors": "Test xətaları:"
 }

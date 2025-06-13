@@ -8,4 +8,6 @@ public class TestResult
     public int FailedTests { get; set; }
     public int SkippedTests { get; set; }
     public TimeSpan Duration { get; set; }
+    public string Output { get; set; } = string.Empty;
+    public string Errors { get; set; } = string.Empty;
 }
