@@ -32,7 +32,6 @@ public class ProjectManager : IProjectManager
         return await Task.WhenAll(files);
     }
 
-
     private static ProjectType DetectProjectType(string projectPath)
     {
         var text = File.ReadAllText(projectPath);

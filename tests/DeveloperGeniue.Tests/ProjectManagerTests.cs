@@ -25,4 +25,33 @@ public class ProjectManagerTests
     [Fact]
         Directory.Delete(tempDir, true);
     }
+
+    [Fact]
+    public void EnumerateProjectFilesSkipsIgnoredDirectories()
+    {
+        var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        Directory.CreateDirectory(tempDir);
+        File.WriteAllText(Path.Combine(tempDir, "Root.csproj"), "<Project/>");
+
+        Directory.CreateDirectory(Path.Combine(tempDir, "bin"));
+        File.WriteAllText(Path.Combine(tempDir, "bin", "ShouldIgnore.csproj"), "<Project/>");
+        Directory.CreateDirectory(Path.Combine(tempDir, "obj"));
+        File.WriteAllText(Path.Combine(tempDir, "obj", "Ignore2.csproj"), "<Project/>");
+        Directory.CreateDirectory(Path.Combine(tempDir, ".git"));
+        File.WriteAllText(Path.Combine(tempDir, ".git", "Ignore3.csproj"), "<Project/>");
+
+        Directory.CreateDirectory(Path.Combine(tempDir, "sub"));
+        File.WriteAllText(Path.Combine(tempDir, "sub", "Nested.csproj"), "<Project/>");
+
+        var pm = new ProjectManager();
+        var found = pm.EnumerateProjectFiles(tempDir).ToList();
+
+        Directory.Delete(tempDir, true);
+
+        Assert.Contains(Path.Combine(tempDir, "Root.csproj"), found);
+        Assert.Contains(Path.Combine(tempDir, "sub", "Nested.csproj"), found);
+        Assert.DoesNotContain(Path.Combine(tempDir, "bin", "ShouldIgnore.csproj"), found);
+        Assert.DoesNotContain(Path.Combine(tempDir, "obj", "Ignore2.csproj"), found);
+        Assert.DoesNotContain(Path.Combine(tempDir, ".git", "Ignore3.csproj"), found);
+    }
 }
