@@ -1,5 +1,6 @@
 using DeveloperGeniue.Core;
-using DeveloperGeniue.AI;
+using DeveloperGeniue.Blockchain;
+using DeveloperGeniue.Visualization;
 using DeveloperGeniue.AI.Speech;
 using System.Linq;
 
@@ -31,6 +32,10 @@ public class Program
             Console.WriteLine(await lang.GetStringAsync("CLI.Command.Scan"));
             Console.WriteLine(await lang.GetStringAsync("CLI.Command.Build"));
             Console.WriteLine(await lang.GetStringAsync("CLI.Command.Test"));
+            Console.WriteLine(await lang.GetStringAsync("CLI.Command.Viz"));
+            Console.WriteLine(await lang.GetStringAsync("CLI.Command.AR"));
+            Console.WriteLine(await lang.GetStringAsync("CLI.Command.Provenance"));
+            Console.WriteLine(await lang.GetStringAsync("CLI.Command.Evolution"));
             Console.WriteLine(await lang.GetStringAsync("CLI.Command.UI"));
             Console.WriteLine(await lang.GetStringAsync("CLI.Command.Train"));
             Console.WriteLine(await lang.GetStringAsync("CLI.Command.Voice"));
@@ -94,6 +99,55 @@ public class Program
                 Console.WriteLine(result.Errors);
             }
 
+            return;
+        }
+
+        if (args[0].Equals("viz", StringComparison.OrdinalIgnoreCase))
+        {
+            if (args.Length < 2)
+            {
+                Console.WriteLine(await lang.GetStringAsync("CLI.MissingProjectPath"));
+                return;
+            }
+
+            ICodeVisualizationService viz = new ThreeJsCodeVisualizationService();
+            await viz.RenderAsync(args[1]);
+            return;
+        }
+
+        if (args[0].Equals("ar", StringComparison.OrdinalIgnoreCase))
+        {
+            if (args.Length < 2)
+            {
+                Console.WriteLine(await lang.GetStringAsync("CLI.MissingProjectPath"));
+                return;
+            }
+
+            IAugmentedRealityService ar = new AugmentedRealityService();
+            await ar.StartCodeReviewAsync(args[1]);
+            return;
+        }
+
+        if (args[0].Equals("provenance", StringComparison.OrdinalIgnoreCase))
+        {
+            if (args.Length < 2)
+            {
+                Console.WriteLine("Missing commit hash.");
+                return;
+            }
+
+            var registry = new BlockchainRegistry();
+            await registry.RegisterCommitAsync(args[1]);
+            Console.WriteLine("Commit registered to blockchain.");
+            return;
+        }
+
+        if (args[0].Equals("evolution", StringComparison.OrdinalIgnoreCase))
+        {
+            var tracker = new EvolutionTracker();
+            var service = new EvolutionAnalyticsService();
+            var analytics = await service.ComputeAsync(tracker);
+            Console.WriteLine($"Commits: {analytics.CommitCount}, {analytics.CommitsPerDay:F2} per day");
             return;
         }
 
