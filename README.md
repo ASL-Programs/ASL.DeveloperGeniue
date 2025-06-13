@@ -103,6 +103,26 @@ dotnet run --project src/DeveloperGeniue.CLI -- provenance <commit-hash>
 dotnet run --project src/DeveloperGeniue.CLI -- evolution
 ```
 
+### Analyze quantum readiness
+
+Generate a simple compatibility report:
+
+```bash
+dotnet run --project src/DeveloperGeniue.CLI -- quantum path/to/project.csproj
+```
+
+### Configure cloud AI provider
+
+Set configuration values `CloudAIProvider`, `AzureAIEndpoint`/`AzureAIKey` or `AWSAIEndpoint`/`AWSAIKey` to use cloud intelligence services.
+
+### Supported languages
+
+Resource files now include English (`en-US`), Azerbaijani (`az-AZ`), Turkish (`tr-TR`) and Russian (`ru-RU`). Switch languages via:
+
+```bash
+dotnet run --project src/DeveloperGeniue.CLI --lang tr-TR
+```
+
 ## Repository Structure
 
 ```

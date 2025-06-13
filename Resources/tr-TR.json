@@ -1,0 +1,25 @@
+{
+  "CLI.Header": "DeveloperGeniue CLI",
+  "CLI.Commands": "Komutlar:",
+  "CLI.Command.Scan": "  scan [yol]   - dizindeki projeleri listele",
+  "CLI.Command.Build": "  build <yol>  - belirtilen projeyi veya çözümü derle",
+  "CLI.Command.Test": "  test <yol>   - belirtilen proje için testleri çalıştır",
+  "CLI.Command.UI": "  ui            - hibrit UI'yi başlat",
+  "CLI.Command.Train": "  train [yol]  - özel AI modelini eğit",
+  "CLI.Command.Voice": "  voice         - bir CLI komutunu konuş",
+  "CLI.Command.Viz": "  viz <yol>    - 3D görselleştirmeyi aç",
+  "CLI.Command.AR": "  ar <yol>     - AR kod incelemesini başlat",
+  "CLI.Command.Provenance": "  provenance <hash> - blockchain'de commiti kaydet",
+  "CLI.Command.Evolution": "  evolution     - kod evrim analizini göster",
+  "CLI.UnknownCommand": "Bilinmeyen komut. Kullanım için --help yazın.",
+  "CLI.MissingProjectPath": "Proje yolu eksik.",
+  "CLI.MissingDirectory": "Dizin bulunamadı: {0}",
+  "CLI.LanguageSet": "Dil {0} olarak ayarlandı",
+  "CLI.TestsPassed": "Geçen Testler: {0}",
+  "CLI.TestsFailed": "Başarısız Testler: {0}",
+  "CLI.TestsSkipped": "Atlanan Testler: {0}",
+  "CLI.TestsTotal": "Toplam Test: {0}",
+  "CLI.TestsDuration": "Süre: {0}",
+  "CLI.TestErrors": "Test Hataları:"
+}
+
