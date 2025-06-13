@@ -72,6 +72,19 @@ public class Program
 
             var manager = new TestManager();
             var result = await manager.RunTestsAsync(args[1]);
+
+            Console.WriteLine(await lang.GetStringAsync("CLI.TestsPassed", result.PassedTests));
+            Console.WriteLine(await lang.GetStringAsync("CLI.TestsFailed", result.FailedTests));
+            Console.WriteLine(await lang.GetStringAsync("CLI.TestsSkipped", result.SkippedTests));
+            Console.WriteLine(await lang.GetStringAsync("CLI.TestsTotal", result.TotalTests));
+            Console.WriteLine(await lang.GetStringAsync("CLI.TestsDuration", result.Duration));
+
+            if (!string.IsNullOrWhiteSpace(result.Errors))
+            {
+                Console.WriteLine(await lang.GetStringAsync("CLI.TestErrors"));
+                Console.WriteLine(result.Errors);
+            }
+
             return;
         }
 

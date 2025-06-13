@@ -7,5 +7,11 @@
   "CLI.UnknownCommand": "Unknown command. Use --help for usage.",
   "CLI.MissingProjectPath": "Missing project path.",
   "CLI.MissingDirectory": "Directory not found: {0}",
-  "CLI.LanguageSet": "Language set to {0}"
+  "CLI.LanguageSet": "Language set to {0}",
+  "CLI.TestsPassed": "Tests Passed: {0}",
+  "CLI.TestsFailed": "Tests Failed: {0}",
+  "CLI.TestsSkipped": "Tests Skipped: {0}",
+  "CLI.TestsTotal": "Total Tests: {0}",
+  "CLI.TestsDuration": "Duration: {0}",
+  "CLI.TestErrors": "Test Errors:"
 }

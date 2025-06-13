@@ -34,9 +34,13 @@ public class TestManager : ITestManager
         await process.WaitForExitAsync();
 
         var duration = DateTime.UtcNow - startTime;
-        var result = ParseTestResults(output.ToString());
+        var outputText = output.ToString();
+        var errorsText = errors.ToString();
+        var result = ParseTestResults(outputText);
         result.Success = process.ExitCode == 0;
         result.Duration = duration;
+        result.Output = outputText;
+        result.Errors = errorsText;
         return result;
     }
 
