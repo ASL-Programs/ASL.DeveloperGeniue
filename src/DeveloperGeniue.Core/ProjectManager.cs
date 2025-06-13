@@ -43,6 +43,7 @@ public class ProjectManager : IProjectManager
     public async Task<IEnumerable<CodeFile>> GetProjectFilesAsync(string projectPath)
     {
         var files = EnumerateProjectFiles(projectPath)
+
             .Select(async f => new CodeFile
             {
                 Path = f,
@@ -52,6 +53,28 @@ public class ProjectManager : IProjectManager
             });
 
         return await Task.WhenAll(files);
+    }
+
+    public IEnumerable<string> EnumerateProjectFiles(string rootPath)
+    {
+        var ignored = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "bin", "obj", ".git" };
+        return Directory
+            .EnumerateFiles(rootPath, "*.csproj", SearchOption.AllDirectories)
+            .Where(f => !IsInIgnoredDirectory(f, ignored));
+    }
+
+    private static bool IsInIgnoredDirectory(string filePath, HashSet<string> ignored)
+    {
+        var dir = new FileInfo(filePath).Directory;
+        while (dir != null)
+        {
+            if (ignored.Contains(dir.Name))
+            {
+                return true;
+            }
+            dir = dir.Parent;
+        }
+        return false;
     }
 
     private static ProjectType DetectProjectType(string projectPath)
