@@ -25,6 +25,7 @@ public class ProjectManager : IProjectManager
         return project;
     }
 
+
     public IEnumerable<string> EnumerateProjectFiles(string root)
         => EnumerateProjectFiles(root, new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "bin", "obj", ".git" });
 
@@ -38,6 +39,7 @@ public class ProjectManager : IProjectManager
     {
         return await Task.Run(() => EnumerateProjectFiles(rootPath), cancellationToken);
     }
+
 
     public async Task<IEnumerable<CodeFile>> GetProjectFilesAsync(string projectPath)
         => await GetProjectFilesAsync(projectPath, CancellationToken.None);

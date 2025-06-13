@@ -1,0 +1,11 @@
+{
+  "CLI.Header": "DeveloperGeniue CLI",
+  "CLI.Commands": "Əmrlər:",
+  "CLI.Command.Scan": "  scan [yol]   - qovluqdakı layihələri sadala",
+  "CLI.Command.Build": "  build <yol>  - göstərilən layihəni qur",
+  "CLI.Command.Test": "  test <yol>   - layihə üçün testləri işə sal",
+  "CLI.UnknownCommand": "Naməlum əmr. İstifadə üçün --help yazın.",
+  "CLI.MissingProjectPath": "Layihə yolu göstərilməyib.",
+  "CLI.MissingDirectory": "Qovluq tapılmadı: {0}",
+  "CLI.LanguageSet": "Dil seçildi: {0}"
+}

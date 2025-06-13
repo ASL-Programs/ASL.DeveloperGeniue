@@ -23,11 +23,6 @@ public class ProjectManagerTests
     }
 
     [Fact]
-        Directory.Delete(tempDir, true);
-    }
-
-
-    [Fact]
     public void EnumerateProjectFilesSkipsIgnoredDirectories()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
