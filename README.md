@@ -59,11 +59,20 @@ dotnet run --project src/DeveloperGeniue.CLI -- scan ../some/path
 
 ### Build a project
 
+```bash
+dotnet run --project src/DeveloperGeniue.CLI -- build path/to/project.csproj
 ```
 
 ### Run tests
 
+```bash
+dotnet test DeveloperGeniue.sln
+```
 
+Or use the CLI:
+
+```bash
+dotnet run --project src/DeveloperGeniue.CLI -- test path/to/project.csproj
 ```
 
 ## Repository Structure
