@@ -19,17 +19,32 @@ public class ProjectManager : IProjectManager
         return project;
     }
 
+    public IEnumerable<string> EnumerateProjectFiles(string root)
+    {
+        foreach (var file in Directory.EnumerateFiles(root, "*.csproj", SearchOption.TopDirectoryOnly))
+        {
+            yield return file;
+        }
+
+        foreach (var dir in Directory.EnumerateDirectories(root))
+        {
+            var name = Path.GetFileName(dir);
+            if (string.Equals(name, "bin", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(name, "obj", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(name, ".git", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            foreach (var file in EnumerateProjectFiles(dir))
+                yield return file;
+        }
+    }
+
     public async Task<IEnumerable<CodeFile>> GetProjectFilesAsync(string projectPath)
     {
-        var allowedExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-        {
-            ".cs", ".csproj", ".sln", ".json", ".xml", ".resx"
-        };
 
-        var projectDir = Path.GetDirectoryName(projectPath)!;
-        var files = Directory
-            .EnumerateFiles(projectDir, "*.*", SearchOption.AllDirectories)
-            .Where(f => allowedExtensions.Contains(Path.GetExtension(f)))
+        var files = EnumerateProjectFiles(projectPath)
             .Select(async f => new CodeFile
             {
                 Path = f,
@@ -39,6 +54,28 @@ public class ProjectManager : IProjectManager
             });
 
         return await Task.WhenAll(files);
+    }
+
+    public IEnumerable<string> EnumerateProjectFiles(string rootPath)
+    {
+        var ignored = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "bin", "obj", ".git" };
+        return Directory
+            .EnumerateFiles(rootPath, "*.csproj", SearchOption.AllDirectories)
+            .Where(f => !IsInIgnoredDirectory(f, ignored));
+    }
+
+    private static bool IsInIgnoredDirectory(string filePath, HashSet<string> ignored)
+    {
+        var dir = new FileInfo(filePath).Directory;
+        while (dir != null)
+        {
+            if (ignored.Contains(dir.Name))
+            {
+                return true;
+            }
+            dir = dir.Parent;
+        }
+        return false;
     }
 
     private static ProjectType DetectProjectType(string projectPath)
