@@ -19,12 +19,12 @@ public class Program
         if (args.Length == 0 || args[0].Equals("--help", StringComparison.OrdinalIgnoreCase))
         {
 
-            Console.WriteLine("DeveloperGeniue CLI");
-            Console.WriteLine("Commands:");
-            Console.WriteLine("  scan [path]   - list projects in directory");
-            Console.WriteLine("  build <path>  - build specified project or solution");
-            Console.WriteLine("  test <path>   - run tests for specified project");
-            Console.WriteLine("  ui            - launch hybrid UI");
+            Console.WriteLine(await lang.GetStringAsync("CLI.Header"));
+            Console.WriteLine(await lang.GetStringAsync("CLI.Commands"));
+            Console.WriteLine(await lang.GetStringAsync("CLI.Command.Scan"));
+            Console.WriteLine(await lang.GetStringAsync("CLI.Command.Build"));
+            Console.WriteLine(await lang.GetStringAsync("CLI.Command.Test"));
+            Console.WriteLine(await lang.GetStringAsync("CLI.Command.UI"));
 
             return;
         }
@@ -82,7 +82,7 @@ public class Program
             return;
         }
 
-        Console.WriteLine("Unknown command. Use --help for usage.");
+        Console.WriteLine(await lang.GetStringAsync("CLI.UnknownCommand"));
 
     }
 }

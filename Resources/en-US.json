@@ -4,6 +4,7 @@
   "CLI.Command.Scan": "  scan [path]   - list projects in directory",
   "CLI.Command.Build": "  build <path>  - build specified project or solution",
   "CLI.Command.Test": "  test <path>   - run tests for specified project",
+  "CLI.Command.UI": "  ui            - launch hybrid UI",
   "CLI.UnknownCommand": "Unknown command. Use --help for usage.",
   "CLI.MissingProjectPath": "Missing project path.",
   "CLI.MissingDirectory": "Directory not found: {0}",
