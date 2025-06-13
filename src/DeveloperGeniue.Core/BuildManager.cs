@@ -28,12 +28,30 @@ public class BuildManager : IBuildManager
         process.ErrorDataReceived += (s, e) => { if (e.Data != null) errors.AppendLine(e.Data); };
 
         var sw = Stopwatch.StartNew();
-        process.Start();
-        process.BeginOutputReadLine();
-        process.BeginErrorReadLine();
+        try
+        {
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
 
-        await process.WaitForExitAsync(cancellationToken);
-        sw.Stop();
+            await process.WaitForExitAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            errors.AppendLine(ex.Message);
+            return new BuildResult
+            {
+                Success = false,
+                Output = output.ToString(),
+                Errors = errors.ToString(),
+                Duration = sw.Elapsed,
+                ExitCode = process.ExitCode
+            };
+        }
+        finally
+        {
+            sw.Stop();
+        }
 
         return new BuildResult
         {

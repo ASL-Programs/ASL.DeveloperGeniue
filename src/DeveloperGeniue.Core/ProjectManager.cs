@@ -21,15 +21,25 @@ public class ProjectManager : IProjectManager
             Framework = DetectTargetFramework(projectPath)
         };
 
-        var dir = System.IO.Path.GetDirectoryName(projectPath) ?? System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(projectPath));
-        if (!string.IsNullOrEmpty(dir))
+        try
         {
-            var files = await GetProjectFilesAsync(dir, cancellationToken);
-            project.Files.AddRange(files);
+            var dir = System.IO.Path.GetDirectoryName(projectPath) ?? System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(projectPath));
+            if (!string.IsNullOrEmpty(dir))
+            {
+                var files = await GetProjectFilesAsync(dir, cancellationToken);
+                project.Files.AddRange(files);
+            }
+        }
+        catch (Exception ex)
+        {
+            // capture error information in LoadDuration as zero and continue
+            project.Files.Clear();
+            project.Framework = string.Empty;
+            Console.Error.WriteLine($"Failed to load project: {ex.Message}");
         }
 
         sw.Stop();
-        _ = sw.Elapsed; // placeholder for metrics usage
+        project.LoadDuration = sw.Elapsed;
         return project;
     }
 

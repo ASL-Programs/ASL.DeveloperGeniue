@@ -6,5 +6,6 @@ public class Project
     public string Path { get; set; } = string.Empty;
     public ProjectType Type { get; set; } = ProjectType.Unknown;
     public string Framework { get; set; } = string.Empty;
+    public TimeSpan LoadDuration { get; set; }
     public List<CodeFile> Files { get; set; } = new();
 }
