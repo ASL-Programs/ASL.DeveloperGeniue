@@ -1,5 +1,6 @@
 using System.Xml.Linq;
 using System.IO;
+using System.Linq;
 
 namespace DeveloperGeniue.Core;
 
@@ -20,7 +21,15 @@ public class ProjectManager : IProjectManager
 
     public async Task<IEnumerable<CodeFile>> GetProjectFilesAsync(string projectPath)
     {
-        var allowedExtensions = new[] { ".cs", ".csproj", ".sln", ".json", ".xml", ".resx" };
+        var allowedExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ".cs", ".csproj", ".sln", ".json", ".xml", ".resx"
+        };
+
+        var projectDir = Path.GetDirectoryName(projectPath)!;
+        var files = Directory
+            .EnumerateFiles(projectDir, "*.*", SearchOption.AllDirectories)
+            .Where(f => allowedExtensions.Contains(Path.GetExtension(f)))
             .Select(async f => new CodeFile
             {
                 Path = f,
@@ -73,6 +82,4 @@ public class ProjectManager : IProjectManager
             _ => CodeFileType.Other
         };
     }
-
-  }
 }
