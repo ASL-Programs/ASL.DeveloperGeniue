@@ -1,13 +1,18 @@
 using System.Xml.Linq;
 using System.IO;
 using System.Linq;
+using System.Diagnostics;
 
 namespace DeveloperGeniue.Core;
 
 public class ProjectManager : IProjectManager
 {
     public async Task<Project> LoadProjectAsync(string projectPath)
+        => await LoadProjectAsync(projectPath, CancellationToken.None);
+
+    public async Task<Project> LoadProjectAsync(string projectPath, CancellationToken cancellationToken)
     {
+        var sw = Stopwatch.StartNew();
         var project = new Project
         {
             Name = System.IO.Path.GetFileNameWithoutExtension(projectPath),
@@ -15,40 +20,35 @@ public class ProjectManager : IProjectManager
             Type = DetectProjectType(projectPath),
             Framework = DetectTargetFramework(projectPath)
         };
-
+        sw.Stop();
+        _ = sw.Elapsed; // placeholder for metrics usage
         return project;
     }
 
     public IEnumerable<string> EnumerateProjectFiles(string root)
+        => EnumerateProjectFiles(root, new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "bin", "obj", ".git" });
+
+    private static IEnumerable<string> EnumerateProjectFiles(string rootPath, HashSet<string> ignored)
     {
-        foreach (var file in Directory.EnumerateFiles(root, "*.csproj", SearchOption.TopDirectoryOnly))
-        {
-            yield return file;
-        }
+        return Directory.EnumerateFiles(rootPath, "*.csproj", SearchOption.AllDirectories)
+            .Where(f => !IsInIgnoredDirectory(f, ignored));
+    }
 
-        foreach (var dir in Directory.EnumerateDirectories(root))
-        {
-            var name = Path.GetFileName(dir);
-            if (string.Equals(name, "bin", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(name, "obj", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(name, ".git", StringComparison.OrdinalIgnoreCase))
-            {
-                continue;
-            }
-
-            foreach (var file in EnumerateProjectFiles(dir))
-                yield return file;
-        }
+    public async Task<IEnumerable<string>> EnumerateProjectFilesAsync(string rootPath, CancellationToken cancellationToken)
+    {
+        return await Task.Run(() => EnumerateProjectFiles(rootPath), cancellationToken);
     }
 
     public async Task<IEnumerable<CodeFile>> GetProjectFilesAsync(string projectPath)
-    {
+        => await GetProjectFilesAsync(projectPath, CancellationToken.None);
 
+    public async Task<IEnumerable<CodeFile>> GetProjectFilesAsync(string projectPath, CancellationToken cancellationToken)
+    {
         var files = EnumerateProjectFiles(projectPath)
             .Select(async f => new CodeFile
             {
                 Path = f,
-                Content = await File.ReadAllTextAsync(f),
+                Content = await File.ReadAllTextAsync(f, cancellationToken),
                 Type = DetermineFileType(f),
                 LastModified = File.GetLastWriteTime(f)
             });
@@ -56,13 +56,6 @@ public class ProjectManager : IProjectManager
         return await Task.WhenAll(files);
     }
 
-    public IEnumerable<string> EnumerateProjectFiles(string rootPath)
-    {
-        var ignored = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "bin", "obj", ".git" };
-        return Directory
-            .EnumerateFiles(rootPath, "*.csproj", SearchOption.AllDirectories)
-            .Where(f => !IsInIgnoredDirectory(f, ignored));
-    }
 
     private static bool IsInIgnoredDirectory(string filePath, HashSet<string> ignored)
     {

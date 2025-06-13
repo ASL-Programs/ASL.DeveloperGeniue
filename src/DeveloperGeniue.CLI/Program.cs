@@ -13,6 +13,7 @@ public class Program
             Console.WriteLine("  scan [path]   - list projects in directory");
             Console.WriteLine("  build <path>  - build specified project or solution");
             Console.WriteLine("  test <path>   - run tests for specified project");
+            Console.WriteLine("  ui            - launch hybrid UI");
             return;
         }
 
@@ -59,6 +60,12 @@ public class Program
 
             var manager = new TestManager();
             var result = await manager.RunTestsAsync(args[1]);
+            return;
+        }
+
+        if (args[0].Equals("ui", StringComparison.OrdinalIgnoreCase))
+        {
+            await HybridHost.RunAsync();
             return;
         }
 
