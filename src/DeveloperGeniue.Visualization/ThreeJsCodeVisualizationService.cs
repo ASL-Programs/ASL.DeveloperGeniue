@@ -3,18 +3,50 @@ using System.Diagnostics;
 namespace DeveloperGeniue.Visualization;
 
 /// <summary>
-/// Simple Three.js-based code visualization implementation.
-/// This implementation launches the default browser with a generated HTML page
-/// that would normally render the project structure using Three.js.
+/// Basic yet functional Three.js-based code visualization implementation.
+/// The service generates an HTML page containing a minimal Three.js scene that
+/// visualizes each <c>.cs</c> file in the project directory as a cube.  The page
+/// is written to a temporary file and opened in the default browser.
 /// </summary>
 public class ThreeJsCodeVisualizationService : ICodeVisualizationService
 {
     public async Task RenderAsync(string projectPath)
     {
-        // In a full implementation this would generate an HTML file that
-        // uses Three.js to create a 3D representation of the codebase.
-        var html = @$"<html><head><script src='https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js'></script></head>
-<body><h1>3D visualization for {projectPath}</h1></body></html>";
+        var files = Directory
+            .EnumerateFiles(projectPath, "*.cs", SearchOption.AllDirectories)
+            .Select(Path.GetFileName)
+            .ToList();
+
+        var json = System.Text.Json.JsonSerializer.Serialize(files);
+        var html = @$"<html><head>
+    <script src='https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js'></script>
+</head>
+<body style='margin:0'>
+<canvas id='c'></canvas>
+<script>
+const files = {json};
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({{canvas: document.getElementById('c')}});
+renderer.setSize(window.innerWidth, window.innerHeight);
+camera.position.z = 5;
+files.forEach((f, i) => {{
+  const geometry = new THREE.BoxGeometry(0.5,0.5,0.5);
+  const material = new THREE.MeshNormalMaterial();
+  const cube = new THREE.Mesh(geometry, material);
+  cube.position.x = (i % 10) - 5;
+  cube.position.y = Math.floor(i / 10);
+  scene.add(cube);
+}});
+function animate() {{
+  requestAnimationFrame(animate);
+  scene.rotation.y += 0.01;
+  renderer.render(scene, camera);
+}}
+animate();
+</script>
+</body></html>";
+
         var tempFile = Path.Combine(Path.GetTempPath(), "devgen_threejs.html");
         await File.WriteAllTextAsync(tempFile, html);
         Process.Start(new ProcessStartInfo { FileName = tempFile, UseShellExecute = true });

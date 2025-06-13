@@ -2,6 +2,7 @@ using DeveloperGeniue.Core;
 using DeveloperGeniue.Blockchain;
 using DeveloperGeniue.Visualization;
 using DeveloperGeniue.AI.Speech;
+using DeveloperGeniue.AI;
 using System.Linq;
 
 namespace DeveloperGeniue.CLI;

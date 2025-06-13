@@ -1,10 +1,13 @@
 using System.Text.Json;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DeveloperGeniue.Blockchain;
 
 /// <summary>
-/// Very lightweight blockchain registry simulation used to track commit hashes.
-/// Commit hashes are appended to a local file acting as a blockchain ledger.
+/// Lightweight blockchain registry simulation used to track commit metadata.
+/// Each commit is stored with its origin, optional features and an NFT token
+/// identifier if minted. The ledger is persisted as JSON on disk.
 /// </summary>
 public class BlockchainRegistry : IBlockchainRegistry
 {
@@ -17,14 +20,17 @@ public class BlockchainRegistry : IBlockchainRegistry
     }
 
     public async Task RegisterCommitAsync(string commitHash)
+        => await RegisterCommitAsync(commitHash, "unknown", null);
+
+    public async Task RegisterCommitAsync(string commitHash, string origin, IEnumerable<string>? features)
     {
         await _lock.WaitAsync();
         try
         {
             var blocks = await LoadAsync();
-            if (!blocks.Contains(commitHash))
+            if (blocks.All(b => b.CommitHash != commitHash))
             {
-                blocks.Add(commitHash);
+                blocks.Add(new BlockchainRecord(commitHash, origin, features?.ToList() ?? new(), null));
                 await SaveAsync(blocks);
             }
         }
@@ -40,7 +46,7 @@ public class BlockchainRegistry : IBlockchainRegistry
         try
         {
             var blocks = await LoadAsync();
-            return blocks.Contains(commitHash);
+            return blocks.Any(b => b.CommitHash == commitHash);
         }
         finally
         {
@@ -48,15 +54,53 @@ public class BlockchainRegistry : IBlockchainRegistry
         }
     }
 
-    private async Task<HashSet<string>> LoadAsync()
+    public async Task<bool> VerifyFeatureAsync(string commitHash, string feature)
     {
-        if (!File.Exists(_ledgerPath))
-            return new HashSet<string>();
-        var json = await File.ReadAllTextAsync(_ledgerPath);
-        return JsonSerializer.Deserialize<HashSet<string>>(json) ?? new();
+        await _lock.WaitAsync();
+        try
+        {
+            var blocks = await LoadAsync();
+            var record = blocks.FirstOrDefault(b => b.CommitHash == commitHash);
+            return record != null && record.Features.Contains(feature);
+        }
+        finally
+        {
+            _lock.Release();
+        }
     }
 
-    private async Task SaveAsync(HashSet<string> blocks)
+    public async Task<string> MintNftAsync(string commitHash)
+    {
+        await _lock.WaitAsync();
+        try
+        {
+            var blocks = await LoadAsync();
+            var record = blocks.FirstOrDefault(b => b.CommitHash == commitHash);
+            if (record == null)
+                throw new InvalidOperationException("Commit not found");
+
+            if (string.IsNullOrEmpty(record.NftToken))
+            {
+                record.NftToken = Guid.NewGuid().ToString("N");
+                await SaveAsync(blocks);
+            }
+            return record.NftToken!;
+        }
+        finally
+        {
+            _lock.Release();
+        }
+    }
+
+    private async Task<List<BlockchainRecord>> LoadAsync()
+    {
+        if (!File.Exists(_ledgerPath))
+            return new List<BlockchainRecord>();
+        var json = await File.ReadAllTextAsync(_ledgerPath);
+        return JsonSerializer.Deserialize<List<BlockchainRecord>>(json) ?? new();
+    }
+
+    private async Task SaveAsync(List<BlockchainRecord> blocks)
     {
         var json = JsonSerializer.Serialize(blocks);
         await File.WriteAllTextAsync(_ledgerPath, json);
