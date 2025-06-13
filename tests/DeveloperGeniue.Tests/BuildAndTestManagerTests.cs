@@ -35,10 +35,5 @@ public class BuildAndTestManagerTests
     private static string GetRepoRoot()
     {
         var dir = AppContext.BaseDirectory;
-        for (int i = 0; i < 5; i++)
-        {
-            dir = Directory.GetParent(dir)!.FullName;
-        }
-        return dir;
     }
 }
