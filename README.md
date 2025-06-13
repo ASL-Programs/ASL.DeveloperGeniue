@@ -43,6 +43,36 @@ Run the command line application:
 dotnet run --project src/DeveloperGeniue.CLI
 ```
 
+### Discover projects
+
+List all `.csproj` files under the current directory:
+
+```bash
+dotnet run --project src/DeveloperGeniue.CLI -- scan
+```
+
+You can provide a path to scan a specific folder:
+
+```bash
+dotnet run --project src/DeveloperGeniue.CLI -- scan ../some/path
+```
+
+### Build a project
+
+Compile a solution or project file:
+
+```bash
+dotnet run --project src/DeveloperGeniue.CLI -- build DeveloperGeniue.sln
+```
+
+### Run tests
+
+Execute tests for a given project:
+
+```bash
+dotnet run --project src/DeveloperGeniue.CLI -- test tests/DeveloperGeniue.Tests/DeveloperGeniue.Tests.csproj
+```
+
 ## Repository Structure
 
 ```
