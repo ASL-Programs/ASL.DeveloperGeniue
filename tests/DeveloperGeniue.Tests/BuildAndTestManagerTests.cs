@@ -35,15 +35,5 @@ public class BuildAndTestManagerTests
     private static string GetRepoRoot()
     {
         var dir = AppContext.BaseDirectory;
-        while (dir != null && !File.Exists(Path.Combine(dir, "DeveloperGeniue.sln")))
-        {
-            var parent = Directory.GetParent(dir);
-            if (parent == null)
-            {
-                break;
-            }
-            dir = parent.FullName;
-        }
-        return dir ?? AppContext.BaseDirectory;
     }
 }
