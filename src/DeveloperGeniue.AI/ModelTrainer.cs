@@ -19,12 +19,22 @@ public class ModelTrainer
     }
 
     /// <summary>
+    /// Asynchronously trains the model using the provided dataset path.
+    /// </summary>
+    public async Task<ModelTrainingReport> TrainModelAsync(string dataPath, CancellationToken cancellationToken = default)
+    {
+        TrainModel(dataPath);
+        await Task.Delay(500, cancellationToken); // simulate work
+        return new ModelTrainingReport(true, $"Model trained with {dataPath}");
+    }
+
+    /// <summary>
     /// Prompts the user for a training data path via voice input and trains the model.
     /// </summary>
     public async Task TrainModelWithVoiceAsync(Speech.ISpeechInterface speech, CancellationToken cancellationToken = default)
     {
-        Console.WriteLine("Please specify the training data path:");
+        await speech.SpeakAsync("Please specify the training data path:", cancellationToken);
         var path = await speech.ListenForCommandAsync(cancellationToken);
-        TrainModel(path);
+        await TrainModelAsync(path, cancellationToken);
     }
 }

@@ -1,5 +1,6 @@
 using DeveloperGeniue.Core;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace DeveloperGeniue.AI;
 
@@ -11,7 +12,7 @@ public class PredictiveAnalyticsService
     /// <summary>
     /// Gathers statistics from the provided project and optional results to return a simple prediction summary.
     /// </summary>
-    public PredictiveAnalyticsReport Analyze(Project project, BuildResult? build = null, TestResult? tests = null)
+    public PredictiveAnalyticsReport Analyze(Project project, BuildResult? build = null, TestResult? tests = null, IEnumerable<int>? historicalFileCounts = null)
     {
         int totalFiles = project.Files.Count;
         double avgLines = totalFiles == 0
@@ -33,6 +34,17 @@ public class PredictiveAnalyticsService
             summary += $", tests pass rate {passRate:P0}";
         }
 
-        return new PredictiveAnalyticsReport(totalFiles, avgLines, buildSucceeded, passRate, summary);
+        string trend = "stable";
+        if (historicalFileCounts != null && historicalFileCounts.Any())
+        {
+            double avgHistory = historicalFileCounts.Average();
+            trend = totalFiles > avgHistory
+                ? "growing"
+                : totalFiles < avgHistory
+                    ? "shrinking"
+                    : "stable";
+        }
+
+        return new PredictiveAnalyticsReport(totalFiles, avgLines, buildSucceeded, passRate, summary, trend);
     }
 }

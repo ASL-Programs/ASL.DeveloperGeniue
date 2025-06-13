@@ -17,4 +17,10 @@ public class SpeechInterface : ISpeechInterface
         string? input = Console.ReadLine();
         return Task.FromResult(input ?? string.Empty);
     }
+
+    public Task SpeakAsync(string text, CancellationToken cancellationToken = default)
+    {
+        Console.WriteLine(text);
+        return Task.CompletedTask;
+    }
 }

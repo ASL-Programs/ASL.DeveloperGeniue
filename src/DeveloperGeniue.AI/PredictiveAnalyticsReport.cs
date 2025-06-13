@@ -8,4 +8,5 @@ public record PredictiveAnalyticsReport(
     double AverageLinesPerFile,
     bool BuildSucceeded,
     double TestPassRate,
-    string Summary);
+    string Summary,
+    string Trend);
