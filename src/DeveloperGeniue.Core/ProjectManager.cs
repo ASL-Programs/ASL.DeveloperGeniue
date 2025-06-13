@@ -1,6 +1,7 @@
 using System.Xml.Linq;
 using System.IO;
 
+
 namespace DeveloperGeniue.Core;
 
 public class ProjectManager : IProjectManager
@@ -24,10 +25,10 @@ public class ProjectManager : IProjectManager
     public async Task<IEnumerable<CodeFile>> GetProjectFilesAsync(string projectPath)
     {
         var allowedExtensions = new[] { ".cs", ".csproj", ".sln", ".json", ".xml", ".resx" };
-
         var files = Directory.GetFiles(projectPath, "*.*", SearchOption.AllDirectories)
             .Where(f => allowedExtensions.Contains(System.IO.Path.GetExtension(f))
                 && !IsInIgnoredDirectory(f))
+
             .Select(async f => new CodeFile
             {
                 Path = f,
@@ -79,12 +80,5 @@ public class ProjectManager : IProjectManager
             ".resx" => CodeFileType.Resx,
             _ => CodeFileType.Other
         };
-    }
-
-    private static bool IsInIgnoredDirectory(string path)
-    {
-        var segments = path.Split(Path.DirectorySeparatorChar);
-        return segments.Contains("bin", StringComparer.OrdinalIgnoreCase) ||
-               segments.Contains("obj", StringComparer.OrdinalIgnoreCase);
     }
 }
