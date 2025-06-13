@@ -4,6 +4,7 @@
   "CLI.Command.Scan": "  scan [yol]   - qovluqdakı layihələri sadala",
   "CLI.Command.Build": "  build <yol>  - göstərilən layihəni qur",
   "CLI.Command.Test": "  test <yol>   - layihə üçün testləri işə sal",
+  "CLI.Command.UI": "  ui            - hibrid UI-ni işə sal",
   "CLI.UnknownCommand": "Naməlum əmr. İstifadə üçün --help yazın.",
   "CLI.MissingProjectPath": "Layihə yolu göstərilməyib.",
   "CLI.MissingDirectory": "Qovluq tapılmadı: {0}",
