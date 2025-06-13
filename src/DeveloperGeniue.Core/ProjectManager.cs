@@ -81,4 +81,21 @@ public class ProjectManager : IProjectManager
             _ => CodeFileType.Other
         };
     }
+
+    public IEnumerable<string> EnumerateProjectFiles(string rootPath)
+    {
+        var files = Directory.EnumerateFiles(rootPath, "*.csproj", SearchOption.AllDirectories);
+        foreach (var file in files)
+        {
+            if (!IsInIgnoredDirectory(file))
+                yield return file;
+        }
+    }
+
+    private static bool IsInIgnoredDirectory(string path)
+    {
+        var segments = path.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        return segments.Any(s => s.Equals("bin", StringComparison.OrdinalIgnoreCase)
+                             || s.Equals("obj", StringComparison.OrdinalIgnoreCase));
+    }
 }

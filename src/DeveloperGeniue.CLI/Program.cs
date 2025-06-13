@@ -18,7 +18,7 @@ if (args[0].Equals("scan", StringComparison.OrdinalIgnoreCase))
     }
 
     var manager = new ProjectManager();
-    var projectFiles = Directory.GetFiles(path, "*.csproj", SearchOption.AllDirectories);
+    var projectFiles = manager.EnumerateProjectFiles(path);
     foreach (var projectFile in projectFiles)
     {
         var project = await manager.LoadProjectAsync(projectFile);
