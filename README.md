@@ -75,6 +75,34 @@ Or use the CLI:
 dotnet run --project src/DeveloperGeniue.CLI -- test path/to/project.csproj
 ```
 
+### 3D visualization
+
+Render a simple Three.js view of a project:
+
+```bash
+dotnet run --project src/DeveloperGeniue.CLI -- viz path/to/project.csproj
+```
+
+### Augmented reality review
+
+Start an AR code review session (placeholder implementation):
+
+```bash
+dotnet run --project src/DeveloperGeniue.CLI -- ar path/to/project.csproj
+```
+
+### Register commit on blockchain
+
+```bash
+dotnet run --project src/DeveloperGeniue.CLI -- provenance <commit-hash>
+```
+
+### Show evolution analytics
+
+```bash
+dotnet run --project src/DeveloperGeniue.CLI -- evolution
+```
+
 ## Repository Structure
 
 ```
