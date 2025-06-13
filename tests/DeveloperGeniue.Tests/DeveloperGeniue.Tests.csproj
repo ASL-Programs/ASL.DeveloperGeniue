@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\DeveloperGeniue.Core\DeveloperGeniue.Core.csproj" />
+    <ProjectReference Include="..\..\src\DeveloperGeniue.AI\DeveloperGeniue.AI.csproj" />
   </ItemGroup>
 
 </Project>
