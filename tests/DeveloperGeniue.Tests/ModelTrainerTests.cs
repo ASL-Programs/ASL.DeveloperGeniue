@@ -13,6 +13,9 @@ public class ModelTrainerTests
     {
         public Task<string> ListenForCommandAsync(System.Threading.CancellationToken cancellationToken = default)
             => Task.FromResult("data.csv");
+
+        public Task SpeakAsync(string text, System.Threading.CancellationToken cancellationToken = default)
+            => Task.CompletedTask;
     }
 
     [Fact]

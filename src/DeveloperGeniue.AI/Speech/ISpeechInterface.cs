@@ -11,4 +11,9 @@ public interface ISpeechInterface
     /// Listens for a single command and returns the recognized text.
     /// </summary>
     Task<string> ListenForCommandAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Speaks the provided text to the user.
+    /// </summary>
+    Task SpeakAsync(string text, CancellationToken cancellationToken = default);
 }

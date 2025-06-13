@@ -16,4 +16,15 @@ public class SpeechInterfaceTests
         var command = await speech.ListenForCommandAsync();
         Assert.Equal("hello", command);
     }
+
+    [Fact]
+    public async Task SpeakAsyncWritesOutput()
+    {
+        using var sw = new StringWriter();
+        Console.SetOut(sw);
+        var speech = new SpeechInterface();
+        await speech.SpeakAsync("hi");
+        Console.SetOut(new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true });
+        Assert.Contains("hi", sw.ToString());
+    }
 }

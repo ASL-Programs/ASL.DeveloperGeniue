@@ -26,5 +26,15 @@ public class PredictiveAnalyticsServiceTests
         Assert.True(report.BuildSucceeded);
         Assert.InRange(report.TestPassRate, 0.66, 0.67);
         Assert.Contains("build succeeded", report.Summary);
+        Assert.Equal("stable", report.Trend);
+    }
+
+    [Fact]
+    public void AnalyzeWithHistoryDetectsTrend()
+    {
+        var project = new Project { Files = new() { new CodeFile() } };
+        var service = new PredictiveAnalyticsService();
+        var report = service.Analyze(project, null, null, new[] { 5, 6, 7 });
+        Assert.Equal("shrinking", report.Trend);
     }
 }

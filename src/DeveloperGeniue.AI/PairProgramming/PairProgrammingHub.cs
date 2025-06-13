@@ -47,4 +47,12 @@ public class PairProgrammingHub : Hub
     {
         await Clients.OthersInGroup(sessionId).SendAsync("ReceiveChatMessage", message);
     }
+
+    /// <summary>
+    /// Sends a voice command transcription to collaborators.
+    /// </summary>
+    public async Task SendVoiceCommand(string sessionId, string command)
+    {
+        await Clients.OthersInGroup(sessionId).SendAsync("ReceiveVoiceCommand", command);
+    }
 }
