@@ -28,10 +28,24 @@ public class TestManager : ITestManager
         process.OutputDataReceived += (s, e) => { if (e.Data != null) output.AppendLine(e.Data); };
         process.ErrorDataReceived += (s, e) => { if (e.Data != null) errors.AppendLine(e.Data); };
 
-        process.Start();
-        process.BeginOutputReadLine();
-        process.BeginErrorReadLine();
-        await process.WaitForExitAsync();
+        try
+        {
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+            await process.WaitForExitAsync();
+        }
+        catch (Exception ex)
+        {
+            errors.AppendLine(ex.Message);
+            return new TestResult
+            {
+                Success = false,
+                Output = output.ToString(),
+                Errors = errors.ToString(),
+                Duration = DateTime.UtcNow - startTime
+            };
+        }
 
         var duration = DateTime.UtcNow - startTime;
         var outputText = output.ToString();

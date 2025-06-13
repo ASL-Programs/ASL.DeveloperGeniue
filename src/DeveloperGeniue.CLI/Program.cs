@@ -10,9 +10,7 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
-        IConfigurationService config = args.Contains("--db") || Environment.GetEnvironmentVariable("USE_DB_CONFIG") == "1"
-            ? new DatabaseConfigurationService()
-            : new ConfigurationService();
+        IConfigurationService config = new DatabaseConfigurationService();
         var lang = new LanguageService(config);
         await lang.GetUserLanguageAsync();
         Console.WriteLine($"Using language: {lang.CurrentLanguage}");

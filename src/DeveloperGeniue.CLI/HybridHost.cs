@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using DeveloperGeniue.Core;
 using DeveloperGeniue.AI.Speech;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Components;
 using System.Runtime.Versioning;
 #if WINDOWS
 using System.Threading;
@@ -18,10 +19,12 @@ public static class HybridHost
     {
         var builder = WebApplication.CreateBuilder();
         builder.Services.AddRazorPages();
+        builder.Services.AddServerSideBlazor();
         builder.Services.AddSingleton<IConfigurationService, DatabaseConfigurationService>();
         var app = builder.Build();
         app.MapRazorPages();
-        app.MapGet("/", () => "DeveloperGeniue running");
+        app.MapBlazorHub();
+        app.MapFallbackToPage("/_Host");
         await app.StartAsync(cancellationToken);
 
         ISpeechInterface speech = new SpeechInterface();

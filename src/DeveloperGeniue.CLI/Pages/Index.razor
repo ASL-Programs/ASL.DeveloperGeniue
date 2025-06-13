@@ -1,0 +1,40 @@
+@page "/"
+@inject IConfigurationService Config
+
+<h3>Configuration</h3>
+@if (settings == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table>
+        <thead><tr><th>Key</th><th>Value</th><th></th></tr></thead>
+        <tbody>
+        @foreach (var item in settings.Keys.ToList())
+        {
+            <tr>
+                <td>@item</td>
+                <td><input @bind="settings[item]" /></td>
+                <td><button @onclick="() => Save(item)">Save</button></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    Dictionary<string, string>? settings;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var raw = await Config.GetAllSettingsAsync();
+        settings = raw.ToDictionary(k => k.Key, v => v.Value.ToString());
+    }
+
+    private async Task Save(string key)
+    {
+        if (settings == null) return;
+        await Config.SetSettingAsync(key, settings[key]);
+    }
+}

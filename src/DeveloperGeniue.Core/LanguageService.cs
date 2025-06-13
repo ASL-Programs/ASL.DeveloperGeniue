@@ -20,6 +20,7 @@ public class LanguageService : ILanguageService
     {
         _config = config;
         _resourcePath = resourcePath ?? Path.Combine(AppContext.BaseDirectory, "Resources");
+        CurrentLanguage = _config.GetSettingAsync<string>("language").GetAwaiter().GetResult() ?? "en-US";
     }
 
     public string CurrentLanguage { get; private set; } = "en-US";
