@@ -20,6 +20,14 @@ public class ProjectManager : IProjectManager
             Type = DetectProjectType(projectPath),
             Framework = DetectTargetFramework(projectPath)
         };
+
+        var dir = System.IO.Path.GetDirectoryName(projectPath) ?? System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(projectPath));
+        if (!string.IsNullOrEmpty(dir))
+        {
+            var files = await GetProjectFilesAsync(dir, cancellationToken);
+            project.Files.AddRange(files);
+        }
+
         sw.Stop();
         _ = sw.Elapsed; // placeholder for metrics usage
         return project;

@@ -18,6 +18,9 @@ public class ProjectManagerTests
 
         Assert.Equal("Test", project.Name);
         Assert.Equal("net8.0", project.Framework);
+        Assert.Single(project.Files);
+        Assert.Equal(csprojPath, project.Files[0].Path);
+        Assert.Equal(csprojContent, project.Files[0].Content);
 
         Directory.Delete(tempDir, true);
     }
