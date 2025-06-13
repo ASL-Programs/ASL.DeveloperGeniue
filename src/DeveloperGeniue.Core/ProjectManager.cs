@@ -41,6 +41,16 @@ public class ProjectManager : IProjectManager
         return await Task.WhenAll(files);
     }
 
+    public IEnumerable<string> EnumerateProjectFiles(string rootPath)
+    {
+        var files = Directory.GetFiles(rootPath, "*.csproj", SearchOption.AllDirectories);
+        foreach (var file in files)
+        {
+            if (!IsInIgnoredDirectory(file))
+                yield return file;
+        }
+    }
+
     public async Task ScanProjectFilesAsync(Project project)
     {
         var dir = System.IO.Path.GetDirectoryName(project.Path) ?? project.Path;
