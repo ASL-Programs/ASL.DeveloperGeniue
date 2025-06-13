@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <ProjectReference Include="../DeveloperGeniue.Core/DeveloperGeniue.Core.csproj" />
   </ItemGroup>
 
 </Project>

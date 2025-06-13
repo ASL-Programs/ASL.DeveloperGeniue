@@ -1,4 +1,5 @@
 using DeveloperGeniue.Core;
+using System.Linq;
 
 namespace DeveloperGeniue.CLI;
 
@@ -6,8 +7,12 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
-        var config = new ConfigurationService();
+        IConfigurationService config = args.Contains("--db") || Environment.GetEnvironmentVariable("USE_DB_CONFIG") == "1"
+            ? new DatabaseConfigurationService()
+            : new ConfigurationService();
         var lang = new LanguageService(config);
+        await lang.GetUserLanguageAsync();
+        Console.WriteLine($"Using language: {lang.CurrentLanguage}");
 
         if (args.Length >= 2 && (args[0] == "--lang" || args[0] == "lang"))
         {
