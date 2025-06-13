@@ -4,9 +4,38 @@ if (args.Length == 0 || args[0].Equals("--help", StringComparison.OrdinalIgnoreC
 {
     Console.WriteLine("DeveloperGeniue CLI");
     Console.WriteLine("Commands:");
-    Console.WriteLine("  scan [path]   - Discover projects in the specified path");
+    Console.WriteLine("  scan [path]       - Discover projects in the specified path");
+    Console.WriteLine("  build <path>      - Build the given solution or project");
+    Console.WriteLine("  test <path>       - Run tests for the given project");
+    Console.WriteLine("  config get <key>  - Display a configuration value");
+    Console.WriteLine("  config set <key> <value> - Set a configuration value");
+if (args[0].Equals("config", StringComparison.OrdinalIgnoreCase))
+{
+    if (args.Length < 3 || !(args[1].Equals("get", StringComparison.OrdinalIgnoreCase) || args[1].Equals("set", StringComparison.OrdinalIgnoreCase)))
+    {
+        Console.WriteLine("Usage: config get <key> | config set <key> <value>");
+        return;
+    }
 
-    Console.WriteLine("  build <csproj> - Build the specified project");
+    var service = new ConfigurationService();
+    if (args[1].Equals("get", StringComparison.OrdinalIgnoreCase))
+    {
+        var value = await service.GetSettingAsync<string>(args[2]);
+        Console.WriteLine(value ?? string.Empty);
+    }
+    else
+    {
+        if (args.Length < 4)
+        {
+            Console.WriteLine("Usage: config set <key> <value>");
+            return;
+        }
+        await service.SetSettingAsync(args[2], args[3]);
+        Console.WriteLine("Saved.");
+    }
+    return;
+}
+
     Console.WriteLine("  test <csproj>  - Run tests for the specified project");
 
     return;

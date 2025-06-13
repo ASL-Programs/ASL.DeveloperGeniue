@@ -59,6 +59,15 @@ dotnet run --project src/DeveloperGeniue.CLI -- scan ../some/path
 
 ### Build a project
 
+### Manage configuration
+
+Retrieve or store CLI settings:
+
+```bash
+dotnet run --project src/DeveloperGeniue.CLI -- config get SomeKey
+dotnet run --project src/DeveloperGeniue.CLI -- config set SomeKey SomeValue
+```
+
 Run `dotnet build` through the CLI:
 
 ```bash
