@@ -15,4 +15,36 @@ public class PairProgrammingHub : Hub
     {
         await Clients.Others.SendAsync("ReceiveCodeUpdate", code);
     }
+
+    /// <summary>
+    /// Adds the caller to a collaboration session.
+    /// </summary>
+    public async Task JoinSession(string sessionId)
+    {
+        await Groups.AddToGroupAsync(Context.ConnectionId, sessionId);
+    }
+
+    /// <summary>
+    /// Removes the caller from a collaboration session.
+    /// </summary>
+    public async Task LeaveSession(string sessionId)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, sessionId);
+    }
+
+    /// <summary>
+    /// Shares the current cursor position with collaborators.
+    /// </summary>
+    public async Task SendCursorPosition(string sessionId, int line, int column)
+    {
+        await Clients.OthersInGroup(sessionId).SendAsync("ReceiveCursorPosition", line, column);
+    }
+
+    /// <summary>
+    /// Sends a chat message to collaborators.
+    /// </summary>
+    public async Task SendChatMessage(string sessionId, string message)
+    {
+        await Clients.OthersInGroup(sessionId).SendAsync("ReceiveChatMessage", message);
+    }
 }

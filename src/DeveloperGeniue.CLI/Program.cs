@@ -1,4 +1,6 @@
 using DeveloperGeniue.Core;
+using DeveloperGeniue.AI;
+using DeveloperGeniue.AI.Speech;
 using System.Linq;
 
 namespace DeveloperGeniue.CLI;
@@ -30,6 +32,8 @@ public class Program
             Console.WriteLine(await lang.GetStringAsync("CLI.Command.Build"));
             Console.WriteLine(await lang.GetStringAsync("CLI.Command.Test"));
             Console.WriteLine(await lang.GetStringAsync("CLI.Command.UI"));
+            Console.WriteLine(await lang.GetStringAsync("CLI.Command.Train"));
+            Console.WriteLine(await lang.GetStringAsync("CLI.Command.Voice"));
 
             return;
         }
@@ -90,6 +94,32 @@ public class Program
                 Console.WriteLine(result.Errors);
             }
 
+            return;
+        }
+
+        if (args[0].Equals("train", StringComparison.OrdinalIgnoreCase))
+        {
+            var trainer = new ModelTrainer();
+            if (args.Length >= 2)
+            {
+                trainer.TrainModel(args[1]);
+            }
+            else
+            {
+                ISpeechInterface speech = new SpeechInterface();
+                await trainer.TrainModelWithVoiceAsync(speech);
+            }
+            return;
+        }
+
+        if (args[0].Equals("voice", StringComparison.OrdinalIgnoreCase))
+        {
+            ISpeechInterface speech = new SpeechInterface();
+            Console.WriteLine("Speak command:");
+            var spoken = await speech.ListenForCommandAsync();
+            var voiceArgs = spoken.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (voiceArgs.Length > 0)
+                await Main(voiceArgs);
             return;
         }
 
