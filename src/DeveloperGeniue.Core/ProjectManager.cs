@@ -1,5 +1,6 @@
 using System.Xml.Linq;
 using System.IO;
+using System.Linq;
 
 namespace DeveloperGeniue.Core;
 
@@ -42,8 +43,8 @@ public class ProjectManager : IProjectManager
 
     public async Task<IEnumerable<CodeFile>> GetProjectFilesAsync(string projectPath)
     {
-        var files = EnumerateProjectFiles(projectPath)
 
+        var files = EnumerateProjectFiles(projectPath)
             .Select(async f => new CodeFile
             {
                 Path = f,
@@ -118,5 +119,4 @@ public class ProjectManager : IProjectManager
             _ => CodeFileType.Other
         };
     }
-
 }
