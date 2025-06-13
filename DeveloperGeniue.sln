@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeveloperGeniue.CLI", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeveloperGeniue.Core", "src\DeveloperGeniue.Core\DeveloperGeniue.Core.csproj", "{C2C1259F-E89F-42D4-B2FF-B3ECC2D596FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeveloperGeniue.Visualization", "src\DeveloperGeniue.Visualization\DeveloperGeniue.Visualization.csproj", "{87FD5344-305E-4861-B0F5-C40317E56B34}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeveloperGeniue.Blockchain", "src\DeveloperGeniue.Blockchain\DeveloperGeniue.Blockchain.csproj", "{EDAC60CE-16D2-4B15-BCBE-C7EC28E0C599}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{74A09E92-6647-4F43-96F9-25726F80C2A6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeveloperGeniue.Tests", "tests\DeveloperGeniue.Tests\DeveloperGeniue.Tests.csproj", "{9A9B1228-9909-4636-A4C4-A7732B193941}"
@@ -29,15 +33,25 @@ Global
 		{C2C1259F-E89F-42D4-B2FF-B3ECC2D596FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C2C1259F-E89F-42D4-B2FF-B3ECC2D596FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2C1259F-E89F-42D4-B2FF-B3ECC2D596FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C2C1259F-E89F-42D4-B2FF-B3ECC2D596FF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9A9B1228-9909-4636-A4C4-A7732B193941}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+                {C2C1259F-E89F-42D4-B2FF-B3ECC2D596FF}.Release|Any CPU.Build.0 = Release|Any CPU
+                {87FD5344-305E-4861-B0F5-C40317E56B34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+                {87FD5344-305E-4861-B0F5-C40317E56B34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+                {87FD5344-305E-4861-B0F5-C40317E56B34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+                {87FD5344-305E-4861-B0F5-C40317E56B34}.Release|Any CPU.Build.0 = Release|Any CPU
+                {EDAC60CE-16D2-4B15-BCBE-C7EC28E0C599}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+                {EDAC60CE-16D2-4B15-BCBE-C7EC28E0C599}.Debug|Any CPU.Build.0 = Debug|Any CPU
+                {EDAC60CE-16D2-4B15-BCBE-C7EC28E0C599}.Release|Any CPU.ActiveCfg = Release|Any CPU
+                {EDAC60CE-16D2-4B15-BCBE-C7EC28E0C599}.Release|Any CPU.Build.0 = Release|Any CPU
+                {9A9B1228-9909-4636-A4C4-A7732B193941}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9A9B1228-9909-4636-A4C4-A7732B193941}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9A9B1228-9909-4636-A4C4-A7732B193941}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A9B1228-9909-4636-A4C4-A7732B193941}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1DD3E271-05B6-410D-AF4F-352E05629CC0} = {69EB5441-8889-44C0-A6CA-AD2D3A1CE6F5}
-		{C2C1259F-E89F-42D4-B2FF-B3ECC2D596FF} = {69EB5441-8889-44C0-A6CA-AD2D3A1CE6F5}
-		{9A9B1228-9909-4636-A4C4-A7732B193941} = {74A09E92-6647-4F43-96F9-25726F80C2A6}
+                {C2C1259F-E89F-42D4-B2FF-B3ECC2D596FF} = {69EB5441-8889-44C0-A6CA-AD2D3A1CE6F5}
+                {87FD5344-305E-4861-B0F5-C40317E56B34} = {69EB5441-8889-44C0-A6CA-AD2D3A1CE6F5}
+                {EDAC60CE-16D2-4B15-BCBE-C7EC28E0C599} = {69EB5441-8889-44C0-A6CA-AD2D3A1CE6F5}
+                {9A9B1228-9909-4636-A4C4-A7732B193941} = {74A09E92-6647-4F43-96F9-25726F80C2A6}
 	EndGlobalSection
 EndGlobal
