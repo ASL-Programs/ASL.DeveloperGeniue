@@ -6,6 +6,7 @@ public interface ILanguageService
 {
     Task<string> GetStringAsync(string key, params object[] args);
     Task SetLanguageAsync(string languageCode);
+    Task<string> GetUserLanguageAsync();
     string CurrentLanguage { get; }
 }
 
@@ -45,6 +46,13 @@ public class LanguageService : ILanguageService
             return key;
         }
         return Format(text, args);
+    }
+
+    public async Task<string> GetUserLanguageAsync()
+    {
+        var lang = await _config.GetSettingAsync<string>("language") ?? "en-US";
+        CurrentLanguage = lang;
+        return lang;
     }
 
     private static string Format(string text, object[] args) => args.Length > 0 ? string.Format(text, args) : text;

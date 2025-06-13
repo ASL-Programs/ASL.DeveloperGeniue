@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
+using DeveloperGeniue.Core;
 using System.Runtime.Versioning;
 #if WINDOWS
 using System.Threading;
@@ -15,6 +16,7 @@ public static class HybridHost
     {
         var builder = WebApplication.CreateBuilder();
         builder.Services.AddRazorPages();
+        builder.Services.AddSingleton<IConfigurationService, DatabaseConfigurationService>();
         var app = builder.Build();
         app.MapRazorPages();
         app.MapGet("/", () => "DeveloperGeniue running");
