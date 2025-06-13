@@ -6,6 +6,9 @@ namespace DeveloperGeniue.Core;
 public class BuildManager : IBuildManager
 {
     public async Task<BuildResult> BuildProjectAsync(string projectPath)
+        => await BuildProjectAsync(projectPath, CancellationToken.None);
+
+    public async Task<BuildResult> BuildProjectAsync(string projectPath, CancellationToken cancellationToken)
     {
         var psi = new ProcessStartInfo
         {
@@ -29,7 +32,7 @@ public class BuildManager : IBuildManager
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
 
-        await process.WaitForExitAsync();
+        await process.WaitForExitAsync(cancellationToken);
         sw.Stop();
 
         return new BuildResult

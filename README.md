@@ -80,6 +80,8 @@ dotnet run --project src/DeveloperGeniue.CLI -- test path/to/project.csproj
 ```
 src/DeveloperGeniue.Core   - Class library for core logic
 src/DeveloperGeniue.CLI    - Console entry point (early phase)
+src/DeveloperGeniue.AI     - AI training and analytics components
+src/DeveloperGeniue.SpeechDemo - Demo console for the speech interface
 tests/DeveloperGeniue.Tests - xUnit tests
 DeveloperGeniue.sln        - Solution file
 ```

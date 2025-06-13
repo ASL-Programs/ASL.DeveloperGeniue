@@ -6,10 +6,17 @@ public class ConfigurationService : IConfigurationService
 {
     private readonly string _filePath;
     private readonly SemaphoreSlim _lock = new(1, 1);
+    private Dictionary<string, JsonElement> _cache = new();
+
+    public event EventHandler? SettingsChanged;
 
     public ConfigurationService(string? filePath = null)
     {
         _filePath = filePath ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".developer_geniue_config.json");
+        if (File.Exists(_filePath))
+        {
+            _cache = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(File.ReadAllText(_filePath)) ?? new();
+        }
     }
 
     public async Task<T?> GetSettingAsync<T>(string key)
@@ -17,8 +24,7 @@ public class ConfigurationService : IConfigurationService
         await _lock.WaitAsync();
         try
         {
-            var settings = await LoadAsync();
-            if (settings.TryGetValue(key, out var val))
+            if (_cache.TryGetValue(key, out var val))
             {
                 return JsonSerializer.Deserialize<T>(val);
             }
@@ -35,9 +41,22 @@ public class ConfigurationService : IConfigurationService
         await _lock.WaitAsync();
         try
         {
-            var settings = await LoadAsync();
-            settings[key] = JsonSerializer.SerializeToElement(value);
-            await SaveAsync(settings);
+            _cache[key] = JsonSerializer.SerializeToElement(value);
+            await SaveAsync(_cache);
+            SettingsChanged?.Invoke(this, EventArgs.Empty);
+        }
+        finally
+        {
+            _lock.Release();
+        }
+    }
+
+    public async Task<IDictionary<string, JsonElement>> GetAllSettingsAsync()
+    {
+        await _lock.WaitAsync();
+        try
+        {
+            return new Dictionary<string, JsonElement>(_cache);
         }
         finally
         {
