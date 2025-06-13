@@ -18,12 +18,32 @@ public class ProjectManager : IProjectManager
         return project;
     }
 
+    public IEnumerable<string> EnumerateProjectFiles(string root)
+    {
+        foreach (var file in Directory.EnumerateFiles(root, "*.csproj", SearchOption.TopDirectoryOnly))
+        {
+            yield return file;
+        }
+
+        foreach (var dir in Directory.EnumerateDirectories(root))
+        {
+            var name = Path.GetFileName(dir);
+            if (string.Equals(name, "bin", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(name, "obj", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(name, ".git", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            foreach (var file in EnumerateProjectFiles(dir))
+                yield return file;
+        }
+    }
+
     public async Task<IEnumerable<CodeFile>> GetProjectFilesAsync(string projectPath)
     {
-        var allowedExtensions = new[] { ".cs", ".csproj", ".sln", ".json", ".xml", ".resx" };
-        var files = Directory
-            .EnumerateFiles(projectPath, "*.*", SearchOption.AllDirectories)
-            .Where(f => allowedExtensions.Contains(Path.GetExtension(f), StringComparer.OrdinalIgnoreCase))
+        var files = EnumerateProjectFiles(projectPath)
+
             .Select(async f => new CodeFile
             {
                 Path = f,
@@ -99,5 +119,4 @@ public class ProjectManager : IProjectManager
         };
     }
 
-  }
 }
