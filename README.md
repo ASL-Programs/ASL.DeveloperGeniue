@@ -59,18 +59,19 @@ dotnet run --project src/DeveloperGeniue.CLI -- scan ../some/path
 
 ### Build a project
 
-Compile a solution or project file:
+Run `dotnet build` through the CLI:
 
 ```bash
-dotnet run --project src/DeveloperGeniue.CLI -- build DeveloperGeniue.sln
+dotnet run --project src/DeveloperGeniue.CLI -- build path/to/project.csproj
+
 ```
 
 ### Run tests
 
-Execute tests for a given project:
+Execute `dotnet test` on a project:
 
 ```bash
-dotnet run --project src/DeveloperGeniue.CLI -- test tests/DeveloperGeniue.Tests/DeveloperGeniue.Tests.csproj
+dotnet run --project src/DeveloperGeniue.CLI -- test path/to/project.csproj
 ```
 
 ## Repository Structure
