@@ -1,0 +1,25 @@
+{
+  "CLI.Header": "DeveloperGeniue CLI",
+  "CLI.Commands": "Команды:",
+  "CLI.Command.Scan": "  scan [путь]   - перечислить проекты в каталоге",
+  "CLI.Command.Build": "  build <путь>  - собрать указанный проект или решение",
+  "CLI.Command.Test": "  test <путь>   - запустить тесты для указанного проекта",
+  "CLI.Command.UI": "  ui            - запустить гибридный интерфейс",
+  "CLI.Command.Train": "  train [путь]  - обучить пользовательскую AI модель",
+  "CLI.Command.Voice": "  voice         - произнести команду CLI",
+  "CLI.Command.Viz": "  viz <путь>    - открыть 3D визуализацию",
+  "CLI.Command.AR": "  ar <путь>     - начать AR код-ревью",
+  "CLI.Command.Provenance": "  provenance <хеш> - зарегистрировать коммит в блокчейне",
+  "CLI.Command.Evolution": "  evolution     - показать аналитику эволюции кода",
+  "CLI.UnknownCommand": "Неизвестная команда. Используйте --help для справки.",
+  "CLI.MissingProjectPath": "Не указан путь к проекту.",
+  "CLI.MissingDirectory": "Каталог не найден: {0}",
+  "CLI.LanguageSet": "Язык установлен на {0}",
+  "CLI.TestsPassed": "Тестов пройдено: {0}",
+  "CLI.TestsFailed": "Тестов провалено: {0}",
+  "CLI.TestsSkipped": "Пропущено тестов: {0}",
+  "CLI.TestsTotal": "Всего тестов: {0}",
+  "CLI.TestsDuration": "Длительность: {0}",
+  "CLI.TestErrors": "Ошибки тестов:"
+}
+
