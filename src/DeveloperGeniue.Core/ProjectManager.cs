@@ -1,4 +1,6 @@
 using System.Xml.Linq;
+using System.IO;
+
 
 namespace DeveloperGeniue.Core;
 
@@ -24,7 +26,9 @@ public class ProjectManager : IProjectManager
     {
         var allowedExtensions = new[] { ".cs", ".csproj", ".sln", ".json", ".xml", ".resx" };
         var files = Directory.GetFiles(projectPath, "*.*", SearchOption.AllDirectories)
-            .Where(f => allowedExtensions.Contains(System.IO.Path.GetExtension(f)))
+            .Where(f => allowedExtensions.Contains(System.IO.Path.GetExtension(f))
+                && !IsInIgnoredDirectory(f))
+
             .Select(async f => new CodeFile
             {
                 Path = f,
