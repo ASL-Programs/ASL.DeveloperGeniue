@@ -29,7 +29,7 @@ public class BuildAndTestManagerTests
         Directory.Delete(temp, true);
 
         Assert.True(result.Success);
-        Assert.True(result.Total > 0);
+        Assert.True(result.TotalTests > 0);
     }
 
     private static string GetRepoRoot()
