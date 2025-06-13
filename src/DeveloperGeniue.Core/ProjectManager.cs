@@ -1,5 +1,7 @@
 using System.Xml.Linq;
 using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DeveloperGeniue.Core;
 
@@ -15,8 +17,8 @@ public class ProjectManager : IProjectManager
             Framework = DetectTargetFramework(projectPath)
         };
 
-        var dir = System.IO.Path.GetDirectoryName(projectPath) ?? projectPath;
-        project.Files = (await GetProjectFilesAsync(dir)).ToList();
+        await ScanProjectFilesAsync(project);
+        await AnalyzeDependenciesAsync(project);
 
         return project;
     }
@@ -24,10 +26,10 @@ public class ProjectManager : IProjectManager
     public async Task<IEnumerable<CodeFile>> GetProjectFilesAsync(string projectPath)
     {
         var allowedExtensions = new[] { ".cs", ".csproj", ".sln", ".json", ".xml", ".resx" };
-
         var files = Directory.GetFiles(projectPath, "*.*", SearchOption.AllDirectories)
             .Where(f => allowedExtensions.Contains(System.IO.Path.GetExtension(f))
                 && !IsInIgnoredDirectory(f))
+
             .Select(async f => new CodeFile
             {
                 Path = f,
@@ -37,6 +39,32 @@ public class ProjectManager : IProjectManager
             });
 
         return await Task.WhenAll(files);
+    }
+
+    public async Task ScanProjectFilesAsync(Project project)
+    {
+        var dir = System.IO.Path.GetDirectoryName(project.Path) ?? project.Path;
+        project.Files = (await GetProjectFilesAsync(dir)).ToList();
+    }
+
+    public Task AnalyzeDependenciesAsync(Project project)
+    {
+        try
+        {
+            var doc = XDocument.Load(project.Path);
+            var deps = doc.Descendants("PackageReference")
+                .Select(e => e.Attribute("Include")?.Value)
+                .Where(v => !string.IsNullOrWhiteSpace(v))
+                .Distinct()
+                .ToList();
+            project.Dependencies = deps;
+        }
+        catch
+        {
+            project.Dependencies = new List<string>();
+        }
+
+        return Task.CompletedTask;
     }
 
     private static ProjectType DetectProjectType(string projectPath)
@@ -81,10 +109,11 @@ public class ProjectManager : IProjectManager
         };
     }
 
-    private static bool IsInIgnoredDirectory(string path)
+    private static readonly string[] _ignoredDirs = new[] { "bin", "obj", ".git" };
+
+    private static bool IsInIgnoredDirectory(string filePath)
     {
-        var segments = path.Split(Path.DirectorySeparatorChar);
-        return segments.Contains("bin", StringComparer.OrdinalIgnoreCase) ||
-               segments.Contains("obj", StringComparer.OrdinalIgnoreCase);
+        var parts = filePath.Split(Path.DirectorySeparatorChar);
+        return parts.Any(p => _ignoredDirs.Contains(p, StringComparer.OrdinalIgnoreCase));
     }
 }

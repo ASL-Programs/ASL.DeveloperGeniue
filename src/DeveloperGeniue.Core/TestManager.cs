@@ -7,40 +7,45 @@ public class TestManager : ITestManager
 {
     public async Task<TestResult> RunTestsAsync(string projectPath)
     {
-        var start = DateTime.UtcNow;
-        var psi = new ProcessStartInfo
+        var process = new Process
         {
-            FileName = "dotnet",
-            Arguments = $"test \"{projectPath}\" --no-build --verbosity quiet",
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            CreateNoWindow = true
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "dotnet",
+                Arguments = $"test \"{projectPath}\" --logger:trx --collect:\"XPlat Code Coverage\"",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            }
         };
 
-        using var process = new Process { StartInfo = psi };
         process.Start();
         var output = await process.StandardOutput.ReadToEndAsync();
         await process.WaitForExitAsync();
 
-        var result = ParseTestResults(output);
-        result.Success = process.ExitCode == 0;
-        result.Duration = DateTime.UtcNow - start;
-        return result;
+        return ParseTestResults(output);
     }
 
     private static TestResult ParseTestResults(string output)
     {
-        var result = new TestResult();
-        var match = Regex.Match(output,
-            @"Total tests: (?<total>\d+).+Passed: (?<passed>\d+).+Failed: (?<failed>\d+)",
-            RegexOptions.Singleline);
-        if (match.Success)
+        var result = new TestResult { Output = output };
+
+        var summary = Regex.Match(output, @"Failed:\s*(\d+),\s*Passed:\s*(\d+),\s*Skipped:\s*(\d+),\s*Total:\s*(\d+)");
+        if (summary.Success)
         {
-            result.Total = int.Parse(match.Groups["total"].Value);
-            result.Passed = int.Parse(match.Groups["passed"].Value);
-            result.Failed = int.Parse(match.Groups["failed"].Value);
+            result.FailedTests = int.Parse(summary.Groups[1].Value);
+            result.PassedTests = int.Parse(summary.Groups[2].Value);
+            result.SkippedTests = int.Parse(summary.Groups[3].Value);
+            result.TotalTests = int.Parse(summary.Groups[4].Value);
         }
+
+        var duration = Regex.Match(output, @"Test execution time: ([0-9.]+)");
+        if (duration.Success && double.TryParse(duration.Groups[1].Value, out var seconds))
+        {
+            result.Duration = TimeSpan.FromSeconds(seconds);
+        }
+
+        result.Success = output.Contains("Test Run Successful");
         return result;
     }
 }

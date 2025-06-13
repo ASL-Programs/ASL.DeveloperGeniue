@@ -23,25 +23,37 @@ public class ProjectManagerTests
     }
 
     [Fact]
-    public async Task GetProjectFilesIgnoresBinAndObj()
+    public async Task LoadProjectScansFiles()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
         Directory.CreateDirectory(tempDir);
-        var projectDir = Path.Combine(tempDir, "Project");
-        Directory.CreateDirectory(Path.Combine(projectDir, "bin"));
-        Directory.CreateDirectory(Path.Combine(projectDir, "obj"));
-
-        var csprojPath = Path.Combine(projectDir, "Test.csproj");
-        await File.WriteAllTextAsync(csprojPath, "<Project></Project>");
-        await File.WriteAllTextAsync(Path.Combine(projectDir, "Program.cs"), "class P{}" );
-        await File.WriteAllTextAsync(Path.Combine(projectDir, "bin", "Ignore.cs"), "class Bin{}" );
+        var csprojPath = Path.Combine(tempDir, "Test.csproj");
+        var csprojContent = "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>";
+        await File.WriteAllTextAsync(csprojPath, csprojContent);
+        var csFile = Path.Combine(tempDir, "Class1.cs");
+        await File.WriteAllTextAsync(csFile, "class C {}\n");
 
         var pm = new ProjectManager();
-        var files = await pm.GetProjectFilesAsync(projectDir);
+        var project = await pm.LoadProjectAsync(csprojPath);
 
-        Assert.DoesNotContain(files, f => f.Path.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}"));
-        Assert.DoesNotContain(files, f => f.Path.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}"));
+        Assert.Contains(project.Files, f => f.Path == csFile);
 
+        Directory.Delete(tempDir, true);
+    }
+
+    [Fact]
+    public async Task LoadProjectAnalyzesDependencies()
+    {
+        var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        Directory.CreateDirectory(tempDir);
+        var csprojPath = Path.Combine(tempDir, "Test.csproj");
+        var csprojContent = @"<Project Sdk=""Microsoft.NET.Sdk""><ItemGroup><PackageReference Include=""Newtonsoft.Json"" Version=""13.0.1"" /></ItemGroup><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>";
+        await File.WriteAllTextAsync(csprojPath, csprojContent);
+
+        var pm = new ProjectManager();
+        var project = await pm.LoadProjectAsync(csprojPath);
+
+        Assert.Contains("Newtonsoft.Json", project.Dependencies);
         Directory.Delete(tempDir, true);
     }
 }
