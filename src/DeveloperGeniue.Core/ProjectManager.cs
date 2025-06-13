@@ -3,7 +3,6 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 
-
 namespace DeveloperGeniue.Core;
 
 public class ProjectManager : IProjectManager
@@ -17,6 +16,7 @@ public class ProjectManager : IProjectManager
             Type = DetectProjectType(projectPath),
             Framework = DetectTargetFramework(projectPath)
         };
+
 
         await ScanProjectFilesAsync(project);
         await AnalyzeDependenciesAsync(project);

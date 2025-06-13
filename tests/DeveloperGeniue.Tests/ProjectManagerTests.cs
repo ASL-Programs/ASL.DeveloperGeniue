@@ -54,7 +54,6 @@ public class ProjectManagerTests
         var project = await pm.LoadProjectAsync(csprojPath);
 
         Assert.Contains("Newtonsoft.Json", project.Dependencies);
-
         Directory.Delete(tempDir, true);
     }
 }

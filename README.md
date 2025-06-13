@@ -63,6 +63,7 @@ Run `dotnet build` through the CLI:
 
 ```bash
 dotnet run --project src/DeveloperGeniue.CLI -- build path/to/project.csproj
+
 ```
 
 ### Run tests
