@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 namespace DeveloperGeniue.AI;
 
 /// <summary>
@@ -14,5 +16,15 @@ public class ModelTrainer
     {
         // Placeholder for actual training logic.
         Console.WriteLine($"Training model with data at {dataPath}...");
+    }
+
+    /// <summary>
+    /// Prompts the user for a training data path via voice input and trains the model.
+    /// </summary>
+    public async Task TrainModelWithVoiceAsync(Speech.ISpeechInterface speech, CancellationToken cancellationToken = default)
+    {
+        Console.WriteLine("Please specify the training data path:");
+        var path = await speech.ListenForCommandAsync(cancellationToken);
+        TrainModel(path);
     }
 }

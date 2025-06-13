@@ -5,6 +5,8 @@
   "CLI.Command.Build": "  build <path>  - build specified project or solution",
   "CLI.Command.Test": "  test <path>   - run tests for specified project",
   "CLI.Command.UI": "  ui            - launch hybrid UI",
+  "CLI.Command.Train": "  train [path]  - train custom AI model",
+  "CLI.Command.Voice": "  voice         - speak a CLI command",
   "CLI.UnknownCommand": "Unknown command. Use --help for usage.",
   "CLI.MissingProjectPath": "Missing project path.",
   "CLI.MissingDirectory": "Directory not found: {0}",

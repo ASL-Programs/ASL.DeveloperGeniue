@@ -1,4 +1,5 @@
 using DeveloperGeniue.Core;
+using System.Linq;
 
 namespace DeveloperGeniue.AI;
 
@@ -10,17 +11,28 @@ public class PredictiveAnalyticsService
     /// <summary>
     /// Gathers statistics from the provided project and optional results to return a simple prediction summary.
     /// </summary>
-    public string Analyze(Project project, BuildResult? build = null, TestResult? tests = null)
+    public PredictiveAnalyticsReport Analyze(Project project, BuildResult? build = null, TestResult? tests = null)
     {
-        var score = project.Files.Count;
-        if (build?.Success == true)
+        int totalFiles = project.Files.Count;
+        double avgLines = totalFiles == 0
+            ? 0
+            : project.Files.Average(f => string.IsNullOrEmpty(f.Content) ? 0 : f.Content.Split('\n').Length);
+
+        bool buildSucceeded = build?.Success ?? false;
+        double passRate = tests == null || tests.TotalTests == 0
+            ? 0
+            : tests.PassedTests / (double)tests.TotalTests;
+
+        var summary = $"Files: {totalFiles}, Avg lines/file: {avgLines:F1}";
+        if (build != null)
         {
-            score += 5;
+            summary += build.Success ? ", build succeeded" : ", build failed";
         }
         if (tests != null)
         {
-            score += tests.PassedTests - tests.FailedTests;
+            summary += $", tests pass rate {passRate:P0}";
         }
-        return $"Forecast score: {score}";
+
+        return new PredictiveAnalyticsReport(totalFiles, avgLines, buildSucceeded, passRate, summary);
     }
 }
