@@ -17,7 +17,6 @@ public class ProjectManager : IProjectManager
             Framework = DetectTargetFramework(projectPath)
         };
 
-
         await ScanProjectFilesAsync(project);
         await AnalyzeDependenciesAsync(project);
 

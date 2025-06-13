@@ -25,6 +25,7 @@ public class BuildManager : IBuildManager
         var errors = new StringBuilder();
 
 
+
         process.OutputDataReceived += (s, e) => { if (e.Data != null) output.AppendLine(e.Data); };
         process.ErrorDataReceived += (s, e) => { if (e.Data != null) errors.AppendLine(e.Data); };
 
@@ -41,7 +42,6 @@ public class BuildManager : IBuildManager
             Success = process.ExitCode == 0,
             Output = output.ToString(),
             Errors = errors.ToString(),
-
             Duration = duration,
             ExitCode = process.ExitCode
         };

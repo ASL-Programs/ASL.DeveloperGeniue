@@ -5,11 +5,9 @@ if (args.Length == 0 || args[0].Equals("--help", StringComparison.OrdinalIgnoreC
     Console.WriteLine("DeveloperGeniue CLI");
     Console.WriteLine("Commands:");
     Console.WriteLine("  scan [path]   - Discover projects in the specified path");
-
     Console.WriteLine("  build <csproj> - Build the specified project");
     Console.WriteLine("  test <csproj>  - Run tests for the specified project");
-
-    return;
+   return;
 }
 
 if (args[0].Equals("scan", StringComparison.OrdinalIgnoreCase))
@@ -22,7 +20,6 @@ if (args[0].Equals("scan", StringComparison.OrdinalIgnoreCase))
     }
 
     var manager = new ProjectManager();
-
     var projectFiles = manager.EnumerateProjectFiles(path);
 
     foreach (var projectFile in projectFiles)

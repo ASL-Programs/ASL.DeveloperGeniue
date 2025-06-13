@@ -8,5 +8,4 @@ public class Project
     public string Framework { get; set; } = string.Empty;
     public List<CodeFile> Files { get; set; } = new();
     public List<string> Dependencies { get; set; } = new();
-
 }

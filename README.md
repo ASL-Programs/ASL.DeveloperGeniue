@@ -72,6 +72,7 @@ Execute `dotnet test` on a project:
 
 ```bash
 dotnet run --project src/DeveloperGeniue.CLI -- test path/to/project.csproj
+
 ```
 
 ## Repository Structure
