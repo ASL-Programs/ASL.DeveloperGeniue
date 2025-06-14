@@ -2,16 +2,29 @@ using System.Xml.Linq;
 using System.IO;
 using System.Linq;
 using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace DeveloperGeniue.Core;
 
 public class ProjectManager : IProjectManager
 {
+    private readonly ILogger<ProjectManager> _logger;
+
+    public ProjectManager() : this(Microsoft.Extensions.Logging.Abstractions.NullLogger<ProjectManager>.Instance)
+    {
+    }
+
+    public ProjectManager(ILogger<ProjectManager> logger)
+    {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
+
     public async Task<Project> LoadProjectAsync(string projectPath)
         => await LoadProjectAsync(projectPath, CancellationToken.None);
 
     public async Task<Project> LoadProjectAsync(string projectPath, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Loading project {ProjectPath}", projectPath);
         var sw = Stopwatch.StartNew();
         var project = new Project
         {
@@ -35,11 +48,12 @@ public class ProjectManager : IProjectManager
             // capture error information in LoadDuration as zero and continue
             project.Files.Clear();
             project.Framework = string.Empty;
-            Console.Error.WriteLine($"Failed to load project: {ex.Message}");
+            _logger.LogError(ex, "Failed to load project {ProjectPath}", projectPath);
         }
 
         sw.Stop();
         project.LoadDuration = sw.Elapsed;
+        _logger.LogInformation("Project loaded in {Duration}", project.LoadDuration);
         return project;
     }
 

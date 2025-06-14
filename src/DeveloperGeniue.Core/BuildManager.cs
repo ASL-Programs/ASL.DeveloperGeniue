@@ -1,15 +1,29 @@
 using System.Diagnostics;
 using System.Text;
+using Microsoft.Extensions.Logging;
 
 namespace DeveloperGeniue.Core;
 
 public class BuildManager : IBuildManager
 {
+    private readonly ILogger<BuildManager> _logger;
+
+    public BuildManager()
+        : this(Microsoft.Extensions.Logging.Abstractions.NullLogger<BuildManager>.Instance)
+    {
+    }
+
+    public BuildManager(ILogger<BuildManager> logger)
+    {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
+
     public async Task<BuildResult> BuildProjectAsync(string projectPath)
         => await BuildProjectAsync(projectPath, CancellationToken.None);
 
     public async Task<BuildResult> BuildProjectAsync(string projectPath, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Building project {ProjectPath}", projectPath);
         var psi = new ProcessStartInfo
         {
             FileName = "dotnet",
@@ -39,6 +53,7 @@ public class BuildManager : IBuildManager
         catch (Exception ex)
         {
             errors.AppendLine(ex.Message);
+            _logger.LogError(ex, "Build failed for {ProjectPath}", projectPath);
             return new BuildResult
             {
                 Success = false,
@@ -53,7 +68,7 @@ public class BuildManager : IBuildManager
             sw.Stop();
         }
 
-        return new BuildResult
+        var result = new BuildResult
         {
             Success = process.ExitCode == 0,
             Output = output.ToString(),
@@ -61,5 +76,7 @@ public class BuildManager : IBuildManager
             Duration = sw.Elapsed,
             ExitCode = process.ExitCode
         };
+        _logger.LogInformation("Build completed with exit code {ExitCode} in {Duration}", result.ExitCode, result.Duration);
+        return result;
     }
 }
