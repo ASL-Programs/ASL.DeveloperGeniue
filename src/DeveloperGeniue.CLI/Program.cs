@@ -13,7 +13,7 @@ public class Program
     {
         IConfigurationService config = new DatabaseConfigurationService();
         var lang = new LanguageService(config);
-        await lang.GetUserLanguageAsync();
+        await lang.InitializeAsync();
         Console.WriteLine($"Using language: {lang.CurrentLanguage}");
 
         if (args.Length >= 2 && (args[0] == "--lang" || args[0] == "lang"))
