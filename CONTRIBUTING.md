@@ -4,7 +4,7 @@ Thank you for considering contributing to this project! These guidelines outline
 
 ## Coding Standards
 
-- **Language Style:** Follow generally accepted community standards. For Python code, adhere to [PEP 8](https://peps.python.org/pep-0008/). For JavaScript/TypeScript, follow the [Airbnb style guide](https://github.com/airbnb/javascript) with Prettier for formatting.
+- **Language Style:** Follow generally accepted community standards. For Python code, adhere to [PEP 8](https://peps.python.org/pep-0008/). For JavaScript/TypeScript, follow the [Airbnb style guide](https://github.com/airbnb/javascript) with Prettier for formatting. For C# code, use the .NET conventions enforced by the repository's `.editorconfig` file (four-space indentation, `LF` line endings, braces on new lines).
 - **Documentation:** Include docstrings or comments for all major functions, classes, and modules. Keep the README and other documentation up to date with your changes.
 - **Commit Messages:** Write clear, concise commit messages. Use the present tense and describe what the commit does (e.g., "Add CONTRIBUTING guidelines").
 
