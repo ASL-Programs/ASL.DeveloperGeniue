@@ -26,6 +26,7 @@
     <ProjectReference Include="..\..\src\DeveloperGeniue.Core\DeveloperGeniue.Core.csproj" />
     <ProjectReference Include="..\..\src\DeveloperGeniue.AI\DeveloperGeniue.AI.csproj" />
     <ProjectReference Include="..\..\src\DeveloperGeniue.Blockchain\DeveloperGeniue.Blockchain.csproj" />
+    <ProjectReference Include="..\..\src\DeveloperGeniue.Collaboration\DeveloperGeniue.Collaboration.csproj" />
   </ItemGroup>
 
 </Project>
