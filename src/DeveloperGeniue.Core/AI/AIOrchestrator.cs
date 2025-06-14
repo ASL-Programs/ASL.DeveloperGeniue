@@ -6,11 +6,15 @@ public class AIOrchestrator
 {
     private readonly ConcurrentDictionary<string, IAIClient> _providers = new();
 
-    public AIOrchestrator()
+    private readonly IConfigurationService _config;
+
+    public AIOrchestrator(IConfigurationService config)
     {
+        _config = config;
+
         // Register built-in providers for convenience
-        RegisterProvider("OpenAI", new OpenAIClient());
-        RegisterProvider("Claude", new ClaudeAIClient());
+        RegisterProvider("OpenAI", new OpenAIClient(_config));
+        RegisterProvider("Claude", new ClaudeAIClient(_config));
     }
 
     public void RegisterProvider(string name, IAIClient client)

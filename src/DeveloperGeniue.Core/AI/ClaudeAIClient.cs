@@ -7,12 +7,12 @@ namespace DeveloperGeniue.Core.AI;
 public class ClaudeAIClient : IAIClient
 {
     private readonly HttpClient _httpClient;
-    private readonly string _apiKey;
+    private readonly IConfigurationService _config;
 
-    public ClaudeAIClient(HttpClient? httpClient = null, string? apiKey = null)
+    public ClaudeAIClient(IConfigurationService config, HttpClient? httpClient = null)
     {
+        _config = config;
         _httpClient = httpClient ?? new HttpClient();
-        _apiKey = apiKey ?? Environment.GetEnvironmentVariable("CLAUDE_API_KEY") ?? string.Empty;
     }
 
     public async Task<AIResponse> GetCompletionAsync(AIRequest request, CancellationToken cancellationToken = default)
@@ -22,7 +22,10 @@ public class ClaudeAIClient : IAIClient
         {
             Content = JsonContent.Create(payload)
         };
-        msg.Headers.Add("x-api-key", _apiKey);
+
+        var apiKey = await _config.GetSettingAsync<string>("ClaudeApiKey") ?? string.Empty;
+        msg.Headers.Add("x-api-key", apiKey);
+
         var resp = await _httpClient.SendAsync(msg, cancellationToken);
         if (!resp.IsSuccessStatusCode)
         {

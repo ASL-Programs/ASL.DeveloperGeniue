@@ -1,3 +1,4 @@
+using DeveloperGeniue.Core;
 using DeveloperGeniue.Core.AI;
 using System.Threading.Tasks;
 using Xunit;
@@ -20,9 +21,14 @@ public class AIOrchestratorExtendedTests
     public async Task AnalyzeCodeAsyncUsesOpenAI()
     {
         var client = new StubClient();
-        var orchestrator = new AIOrchestrator();
+        var file = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var config = new ConfigurationService(file);
+        await config.SetSettingAsync("OpenAIApiKey", "test");
+        await config.SetSettingAsync("ClaudeApiKey", "test");
+        var orchestrator = new AIOrchestrator(config);
         orchestrator.RegisterProvider("OpenAI", client);
         await orchestrator.AnalyzeCodeAsync("class C{}", CancellationToken.None);
         Assert.Equal("OpenAI", client.ReceivedRequest?.Provider);
+        File.Delete(file);
     }
 }
