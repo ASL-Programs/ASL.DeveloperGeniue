@@ -1,7 +1,9 @@
 using DeveloperGeniue.Core;
+using System.Runtime.InteropServices;
 using Serilog;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace DeveloperGeniue.Tests;
 
@@ -18,18 +20,15 @@ public class LoggingTests
         var factory = new SerilogLoggerFactory(logger, dispose: true);
         var bm = new BuildManager(factory.CreateLogger<BuildManager>());
 
-        var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-        Directory.CreateDirectory(tempDir);
-        var fake = Path.Combine(tempDir, "dotnet");
-        await File.WriteAllTextAsync(fake, "#!/bin/sh\necho building $@\n");
-        System.Diagnostics.Process.Start("chmod", $"+x {fake}").WaitForExit();
-        var oldPath = Environment.GetEnvironmentVariable("PATH");
-        Environment.SetEnvironmentVariable("PATH", tempDir + Path.PathSeparator + oldPath);
+        var isWin = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+        var lines = isWin
+            ? new[] { "@echo off", "echo building %*" }
+            : new[] { "echo building $@" };
+        var (tempDir, oldPath) = TestHelpers.CreateFakeDotnet(lines);
 
         await bm.BuildProjectAsync("proj.csproj");
 
-        Environment.SetEnvironmentVariable("PATH", oldPath);
-        Directory.Delete(tempDir, true);
+        TestHelpers.CleanupFakeDotnet(tempDir, oldPath);
 
         Assert.Contains(sink.Events, e => e.Level == LogEventLevel.Information);
     }

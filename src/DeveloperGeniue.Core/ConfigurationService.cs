@@ -1,9 +1,11 @@
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
 namespace DeveloperGeniue.Core;
 
 public class ConfigurationService : IConfigurationService
 {
+    private readonly ILogger<ConfigurationService> _logger;
     private readonly string _filePath;
     private readonly SemaphoreSlim _lock = new(1, 1);
     private readonly string? _passphrase;
@@ -11,13 +13,30 @@ public class ConfigurationService : IConfigurationService
 
     public event EventHandler? SettingsChanged;
 
-    public ConfigurationService(string? filePath = null, string? passphrase = null)
+    public ConfigurationService(string? filePath = null)
+        : this(Microsoft.Extensions.Logging.Abstractions.NullLogger<ConfigurationService>.Instance, filePath)
+
     {
+    }
+
+    public ConfigurationService(ILogger<ConfigurationService> logger, string? filePath = null)
+    {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _filePath = filePath ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".developer_geniue_config.json");
-        _passphrase = passphrase;
+
+        _logger.LogInformation("Initializing configuration service with file {FilePath}", _filePath);
+
         if (File.Exists(_filePath))
         {
-            _cache = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(File.ReadAllText(_filePath)) ?? new();
+            try
+            {
+                _cache = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(File.ReadAllText(_filePath)) ?? new();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to load configuration from {FilePath}", _filePath);
+                _cache = new();
+            }
         }
     }
 
@@ -26,6 +45,7 @@ public class ConfigurationService : IConfigurationService
         await _lock.WaitAsync();
         try
         {
+            _logger.LogInformation("Retrieving setting {Key}", key);
             if (_cache.TryGetValue(key, out var val))
             {
                 return JsonSerializer.Deserialize<T>(val);
@@ -43,16 +63,17 @@ public class ConfigurationService : IConfigurationService
         await _lock.WaitAsync();
         try
         {
-            if (key.EndsWith("ApiKey", StringComparison.OrdinalIgnoreCase) && value is string str)
+            _cache[key] = JsonSerializer.SerializeToElement(value);
+            try
             {
-                var encrypted = CryptoHelper.Encrypt(str, _passphrase);
-                _cache[key] = JsonSerializer.SerializeToElement(encrypted);
+                await SaveAsync(_cache);
             }
-            else
+            catch (Exception ex)
             {
-                _cache[key] = JsonSerializer.SerializeToElement(value);
+                _logger.LogError(ex, "Failed to save setting {Key}", key);
+                throw;
             }
-            await SaveAsync(_cache);
+
             SettingsChanged?.Invoke(this, EventArgs.Empty);
         }
         finally
@@ -86,5 +107,6 @@ public class ConfigurationService : IConfigurationService
     {
         using var stream = File.Create(_filePath);
         await JsonSerializer.SerializeAsync(stream, data, new JsonSerializerOptions { WriteIndented = true });
+        _logger.LogInformation("Settings saved to {FilePath}", _filePath);
     }
 }

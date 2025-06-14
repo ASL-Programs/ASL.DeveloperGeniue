@@ -1,5 +1,6 @@
 using Microsoft.Data.Sqlite;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
 namespace DeveloperGeniue.Core;
 
@@ -8,11 +9,19 @@ namespace DeveloperGeniue.Core;
 /// </summary>
 public class DatabaseConfigurationService : IConfigurationService
 {
+    private readonly ILogger<DatabaseConfigurationService> _logger;
     private readonly string _connectionString;
     private readonly string? _passphrase;
 
-    public DatabaseConfigurationService(string? databasePath = null, string? passphrase = null)
+
+    public DatabaseConfigurationService(string? databasePath = null)
+        : this(Microsoft.Extensions.Logging.Abstractions.NullLogger<DatabaseConfigurationService>.Instance, databasePath)
     {
+    }
+
+    public DatabaseConfigurationService(ILogger<DatabaseConfigurationService> logger, string? databasePath = null)
+    {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         var path = databasePath ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "geniue_config.db");
         _connectionString = $"Data Source={path}";
         _passphrase = passphrase;
@@ -21,17 +30,27 @@ public class DatabaseConfigurationService : IConfigurationService
 
     private void EnsureDatabase()
     {
-        using var connection = new SqliteConnection(_connectionString);
-        connection.Open();
-        using var cmd = connection.CreateCommand();
-        cmd.CommandText = "CREATE TABLE IF NOT EXISTS Settings(Key TEXT PRIMARY KEY, Value TEXT NOT NULL);";
-        cmd.ExecuteNonQuery();
+        try
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = "CREATE TABLE IF NOT EXISTS Settings(Key TEXT PRIMARY KEY, Value TEXT NOT NULL);";
+            cmd.ExecuteNonQuery();
+            _logger.LogInformation("Configuration database initialized at {ConnectionString}", _connectionString);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to initialize configuration database at {ConnectionString}", _connectionString);
+            throw;
+        }
     }
 
     public event EventHandler? SettingsChanged;
 
     public async Task<T?> GetSettingAsync<T>(string key)
     {
+        _logger.LogInformation("Retrieving setting {Key}", key);
         using var connection = new SqliteConnection(_connectionString);
         await connection.OpenAsync();
         using var cmd = connection.CreateCommand();
@@ -78,7 +97,16 @@ public class DatabaseConfigurationService : IConfigurationService
         cmd.CommandText = "INSERT INTO Settings(Key, Value) VALUES(@key,@val) ON CONFLICT(Key) DO UPDATE SET Value = excluded.Value";
         cmd.Parameters.AddWithValue("@key", key);
         cmd.Parameters.AddWithValue("@val", json);
-        await cmd.ExecuteNonQueryAsync();
+        try
+        {
+            await cmd.ExecuteNonQueryAsync();
+            _logger.LogInformation("Persisted setting {Key}", key);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to persist setting {Key}", key);
+            throw;
+        }
         SettingsChanged?.Invoke(this, EventArgs.Empty);
     }
 }
