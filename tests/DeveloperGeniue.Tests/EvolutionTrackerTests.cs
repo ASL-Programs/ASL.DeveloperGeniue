@@ -9,7 +9,7 @@ public class EvolutionTrackerTests
     {
         var temp = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         var tracker = new EvolutionTracker(temp);
-        var record = new EvolutionRecord("abc123", DateTime.UtcNow, "initial commit");
+        var record = new EvolutionRecord("abc123", DateTime.UtcNow, "initial commit", "dev");
         await tracker.RecordAsync(record);
 
         var records = await tracker.GetRecordsAsync();
