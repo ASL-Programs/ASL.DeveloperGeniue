@@ -6,4 +6,5 @@ public interface IQuantumReadinessService
     Task<QuantumAlgorithmSuggestions> SuggestQuantumOptimizationsAsync(string code);
     Task<PostQuantumSecurityReport> AnalyzePostQuantumSecurityAsync(string code);
     Task<QuantumSimulationResult> SimulateQuantumPerformanceAsync(string algorithmCode);
+    Task<QuantumPerformanceAnalysis> AnalyzeQuantumPerformanceAsync(string algorithmCode);
 }

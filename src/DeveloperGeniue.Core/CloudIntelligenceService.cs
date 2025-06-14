@@ -5,12 +5,13 @@ namespace DeveloperGeniue.Core;
 
 public class CloudIntelligenceService : ICloudIntelligenceService
 {
-    private readonly HttpClient _http = new();
+    private readonly HttpClient _http;
     private readonly IConfigurationService _config;
 
-    public CloudIntelligenceService(IConfigurationService config)
+    public CloudIntelligenceService(IConfigurationService config, HttpClient? httpClient = null)
     {
         _config = config;
+        _http = httpClient ?? new HttpClient();
     }
 
     public async Task<string> ExecuteAsync(string prompt, CancellationToken cancellationToken = default)
@@ -49,4 +50,10 @@ public class CloudIntelligenceService : ICloudIntelligenceService
         resp.EnsureSuccessStatusCode();
         return await resp.Content.ReadAsStringAsync(cancellationToken);
     }
+
+    public Task<string> AnalyzeCodeAsync(string code, CancellationToken cancellationToken = default)
+        => ExecuteAsync($"ANALYZE:\n{code}", cancellationToken);
+
+    public Task<string> TrainModelAsync(string trainingData, CancellationToken cancellationToken = default)
+        => ExecuteAsync($"TRAIN:\n{trainingData}", cancellationToken);
 }

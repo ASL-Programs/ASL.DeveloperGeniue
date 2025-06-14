@@ -19,4 +19,12 @@ public class QuantumReadinessServiceTests
         var result = await service.SuggestQuantumOptimizationsAsync("sample code");
         Assert.NotEmpty(result.Suggestions);
     }
+
+    [Fact]
+    public async Task AnalyzeQuantumPerformanceReturnsData()
+    {
+        var service = new QuantumReadinessService();
+        var result = await service.AnalyzeQuantumPerformanceAsync("algo");
+        Assert.True(result.QubitCount > 0);
+    }
 }

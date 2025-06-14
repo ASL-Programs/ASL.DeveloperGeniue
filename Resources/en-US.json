@@ -20,5 +20,10 @@
   "CLI.TestsSkipped": "Tests Skipped: {0}",
   "CLI.TestsTotal": "Total Tests: {0}",
   "CLI.TestsDuration": "Duration: {0}",
-  "CLI.TestErrors": "Test Errors:"
+  "CLI.TestErrors": "Test Errors:",
+  "UI.Configuration": "Configuration",
+  "UI.Loading": "Loading...",
+  "UI.Key": "Key",
+  "UI.Value": "Value",
+  "UI.Save": "Save"
 }
