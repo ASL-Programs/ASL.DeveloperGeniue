@@ -8,12 +8,14 @@ public class ConfigurationService : IConfigurationService
     private readonly ILogger<ConfigurationService> _logger;
     private readonly string _filePath;
     private readonly SemaphoreSlim _lock = new(1, 1);
+    private readonly string? _passphrase;
     private Dictionary<string, JsonElement> _cache = new();
 
     public event EventHandler? SettingsChanged;
 
     public ConfigurationService(string? filePath = null)
         : this(Microsoft.Extensions.Logging.Abstractions.NullLogger<ConfigurationService>.Instance, filePath)
+
     {
     }
 
@@ -21,7 +23,9 @@ public class ConfigurationService : IConfigurationService
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _filePath = filePath ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".developer_geniue_config.json");
+
         _logger.LogInformation("Initializing configuration service with file {FilePath}", _filePath);
+
         if (File.Exists(_filePath))
         {
             try
@@ -69,6 +73,7 @@ public class ConfigurationService : IConfigurationService
                 _logger.LogError(ex, "Failed to save setting {Key}", key);
                 throw;
             }
+
             SettingsChanged?.Invoke(this, EventArgs.Empty);
         }
         finally

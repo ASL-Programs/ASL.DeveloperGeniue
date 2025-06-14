@@ -11,7 +11,8 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
-        IConfigurationService config = new DatabaseConfigurationService();
+        var passphrase = Environment.GetEnvironmentVariable("GENIUE_PASSPHRASE");
+        IConfigurationService config = new DatabaseConfigurationService(null, passphrase);
         var lang = new LanguageService(config);
         await lang.InitializeAsync();
         Console.WriteLine($"Using language: {lang.CurrentLanguage}");
