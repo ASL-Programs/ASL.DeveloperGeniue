@@ -1,22 +1,23 @@
 @page "/"
 @inject IConfigurationService Config
+@inject ILanguageService Lang
 
-<h3>Configuration</h3>
+<h3>@Title</h3>
 @if (settings == null)
 {
-    <p>Loading...</p>
+    <p>@Loading</p>
 }
 else
 {
     <table>
-        <thead><tr><th>Key</th><th>Value</th><th></th></tr></thead>
+        <thead><tr><th>@KeyLabel</th><th>@ValueLabel</th><th></th></tr></thead>
         <tbody>
         @foreach (var item in settings.Keys.ToList())
         {
             <tr>
                 <td>@item</td>
                 <td><input @bind="settings[item]" /></td>
-                <td><button @onclick="() => Save(item)">Save</button></td>
+                <td><button @onclick="() => Save(item)">@SaveLabel</button></td>
             </tr>
         }
         </tbody>
@@ -25,11 +26,22 @@ else
 
 @code {
     Dictionary<string, string>? settings;
+    string Title = string.Empty;
+    string Loading = string.Empty;
+    string KeyLabel = string.Empty;
+    string ValueLabel = string.Empty;
+    string SaveLabel = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         var raw = await Config.GetAllSettingsAsync();
         settings = raw.ToDictionary(k => k.Key, v => v.Value.ToString());
+
+        Title = await Lang.GetStringAsync("UI.Configuration");
+        Loading = await Lang.GetStringAsync("UI.Loading");
+        KeyLabel = await Lang.GetStringAsync("UI.Key");
+        ValueLabel = await Lang.GetStringAsync("UI.Value");
+        SaveLabel = await Lang.GetStringAsync("UI.Save");
     }
 
     private async Task Save(string key)

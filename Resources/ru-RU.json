@@ -20,6 +20,11 @@
   "CLI.TestsSkipped": "Пропущено тестов: {0}",
   "CLI.TestsTotal": "Всего тестов: {0}",
   "CLI.TestsDuration": "Длительность: {0}",
-  "CLI.TestErrors": "Ошибки тестов:"
+  "CLI.TestErrors": "Ошибки тестов:",
+  "UI.Configuration": "Конфигурация",
+  "UI.Loading": "Загрузка...",
+  "UI.Key": "Ключ",
+  "UI.Value": "Значение",
+  "UI.Save": "Сохранить"
 }
 

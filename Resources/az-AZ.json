@@ -20,5 +20,10 @@
   "CLI.TestsSkipped": "Keçirilən testlər: {0}",
   "CLI.TestsTotal": "Cəmi testlər: {0}",
   "CLI.TestsDuration": "Müddət: {0}",
-  "CLI.TestErrors": "Test xətaları:"
+  "CLI.TestErrors": "Test xətaları:",
+  "UI.Configuration": "Tənzimləmələr",
+  "UI.Loading": "Yüklənir...",
+  "UI.Key": "Açar",
+  "UI.Value": "Dəyər",
+  "UI.Save": "Yadda saxla"
 }

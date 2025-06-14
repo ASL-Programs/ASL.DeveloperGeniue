@@ -20,6 +20,11 @@
   "CLI.TestsSkipped": "Atlanan Testler: {0}",
   "CLI.TestsTotal": "Toplam Test: {0}",
   "CLI.TestsDuration": "Süre: {0}",
-  "CLI.TestErrors": "Test Hataları:"
+  "CLI.TestErrors": "Test Hataları:",
+  "UI.Configuration": "Yapılandırma",
+  "UI.Loading": "Yükleniyor...",
+  "UI.Key": "Anahtar",
+  "UI.Value": "Değer",
+  "UI.Save": "Kaydet"
 }
 

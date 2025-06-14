@@ -30,4 +30,11 @@ public class QuantumReadinessService : IQuantumReadinessService
         var speedup = 1 + qubits / 10.0;
         return Task.FromResult(new QuantumSimulationResult(qubits, speedup));
     }
+
+    public Task<QuantumPerformanceAnalysis> AnalyzeQuantumPerformanceAsync(string algorithmCode)
+    {
+        var qubits = Math.Max(1, algorithmCode.Length % 10);
+        var speedup = 1 + qubits / 10.0;
+        return Task.FromResult(new QuantumPerformanceAnalysis(qubits, speedup));
+    }
 }
