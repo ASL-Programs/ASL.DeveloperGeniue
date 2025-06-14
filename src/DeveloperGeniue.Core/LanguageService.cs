@@ -15,12 +15,20 @@ public class LanguageService : ILanguageService
     private readonly IConfigurationService _config;
     private readonly string _resourcePath;
     private readonly Dictionary<string, Dictionary<string, string>> _cache = new();
+    private bool _initialized;
 
     public LanguageService(IConfigurationService config, string? resourcePath = null)
     {
         _config = config;
         _resourcePath = resourcePath ?? Path.Combine(AppContext.BaseDirectory, "Resources");
-        CurrentLanguage = _config.GetSettingAsync<string>("language").GetAwaiter().GetResult() ?? "en-US";
+        CurrentLanguage = "en-US";
+    }
+
+    public async Task InitializeAsync()
+    {
+        if (_initialized) return;
+        CurrentLanguage = await _config.GetSettingAsync<string>("language") ?? "en-US";
+        _initialized = true;
     }
 
     public string CurrentLanguage { get; private set; } = "en-US";
@@ -28,11 +36,16 @@ public class LanguageService : ILanguageService
     public async Task SetLanguageAsync(string languageCode)
     {
         CurrentLanguage = languageCode;
+        _initialized = true;
         await _config.SetSettingAsync("language", languageCode);
     }
 
     public async Task<string> GetStringAsync(string key, params object[] args)
     {
+        if (!_initialized)
+        {
+            await InitializeAsync();
+        }
         var lang = await _config.GetSettingAsync<string>("language") ?? CurrentLanguage;
         CurrentLanguage = lang;
         var resources = await LoadLanguageAsync(lang);
@@ -51,9 +64,11 @@ public class LanguageService : ILanguageService
 
     public async Task<string> GetUserLanguageAsync()
     {
-        var lang = await _config.GetSettingAsync<string>("language") ?? "en-US";
-        CurrentLanguage = lang;
-        return lang;
+        if (!_initialized)
+        {
+            await InitializeAsync();
+        }
+        return CurrentLanguage;
     }
 
     private static string Format(string text, object[] args) => args.Length > 0 ? string.Format(text, args) : text;
