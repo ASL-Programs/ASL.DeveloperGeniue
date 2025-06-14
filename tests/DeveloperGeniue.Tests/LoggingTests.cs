@@ -2,6 +2,7 @@ using DeveloperGeniue.Core;
 using Serilog;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace DeveloperGeniue.Tests;
 
