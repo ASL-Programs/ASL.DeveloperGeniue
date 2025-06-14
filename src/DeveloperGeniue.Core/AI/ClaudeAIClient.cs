@@ -8,11 +8,13 @@ public class ClaudeAIClient : IAIClient
 {
     private readonly HttpClient _httpClient;
     private readonly IConfigurationService _config;
+    private readonly string? _passphrase;
 
-    public ClaudeAIClient(IConfigurationService config, HttpClient? httpClient = null)
+    public ClaudeAIClient(IConfigurationService config, HttpClient? httpClient = null, string? passphrase = null)
     {
         _config = config;
         _httpClient = httpClient ?? new HttpClient();
+        _passphrase = passphrase;
     }
 
     public async Task<AIResponse> GetCompletionAsync(AIRequest request, CancellationToken cancellationToken = default)
@@ -23,7 +25,8 @@ public class ClaudeAIClient : IAIClient
             Content = JsonContent.Create(payload)
         };
 
-        var apiKey = await _config.GetSettingAsync<string>("ClaudeApiKey") ?? string.Empty;
+        var rawKey = await _config.GetSettingAsync<string>("ClaudeApiKey") ?? string.Empty;
+        var apiKey = CryptoHelper.Decrypt(rawKey, _passphrase);
         msg.Headers.Add("x-api-key", apiKey);
 
         var resp = await _httpClient.SendAsync(msg, cancellationToken);

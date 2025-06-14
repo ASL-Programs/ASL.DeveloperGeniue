@@ -115,6 +115,10 @@ dotnet run --project src/DeveloperGeniue.CLI -- quantum path/to/project.csproj
 
 Set configuration values `CloudAIProvider`, `AzureAIEndpoint`/`AzureAIKey` or `AWSAIEndpoint`/`AWSAIKey` to use cloud intelligence services.
 
+### Secure API key storage
+
+API keys are encrypted when stored in configuration files or the local database. On Windows, [DPAPI](https://learn.microsoft.com/dotnet/api/system.security.cryptography.protecteddata) protects the values for the current user. On other platforms, an AES key derived from the `GENIUE_PASSPHRASE` environment variable is used. The CLI and web host read this variable to access your keys.
+
 ### Supported languages
 
 Resource files now include English (`en-US`), Azerbaijani (`az-AZ`), Turkish (`tr-TR`) and Russian (`ru-RU`). Switch languages via:

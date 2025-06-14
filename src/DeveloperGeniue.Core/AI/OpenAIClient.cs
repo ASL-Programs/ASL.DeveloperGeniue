@@ -8,11 +8,13 @@ public class OpenAIClient : IAIClient
 {
     private readonly HttpClient _httpClient;
     private readonly IConfigurationService _config;
+    private readonly string? _passphrase;
 
-    public OpenAIClient(IConfigurationService config, HttpClient? httpClient = null)
+    public OpenAIClient(IConfigurationService config, HttpClient? httpClient = null, string? passphrase = null)
     {
         _config = config;
         _httpClient = httpClient ?? new HttpClient();
+        _passphrase = passphrase;
     }
 
     public async Task<AIResponse> GetCompletionAsync(AIRequest request, CancellationToken cancellationToken = default)
@@ -28,7 +30,8 @@ public class OpenAIClient : IAIClient
             Content = JsonContent.Create(payload)
         };
 
-        var apiKey = await _config.GetSettingAsync<string>("OpenAIApiKey") ?? string.Empty;
+        var rawKey = await _config.GetSettingAsync<string>("OpenAIApiKey") ?? string.Empty;
+        var apiKey = CryptoHelper.Decrypt(rawKey, _passphrase);
         msg.Headers.Add("Authorization", $"Bearer {apiKey}");
 
         var resp = await _httpClient.SendAsync(msg, cancellationToken);

@@ -20,7 +20,8 @@ public static class HybridHost
         var builder = WebApplication.CreateBuilder();
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor();
-        builder.Services.AddSingleton<IConfigurationService, DatabaseConfigurationService>();
+        var passphrase = Environment.GetEnvironmentVariable("GENIUE_PASSPHRASE");
+        builder.Services.AddSingleton<IConfigurationService>(_ => new DatabaseConfigurationService(null, passphrase));
         var app = builder.Build();
         app.MapRazorPages();
         app.MapBlazorHub();

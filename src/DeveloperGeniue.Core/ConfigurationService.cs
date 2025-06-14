@@ -6,13 +6,15 @@ public class ConfigurationService : IConfigurationService
 {
     private readonly string _filePath;
     private readonly SemaphoreSlim _lock = new(1, 1);
+    private readonly string? _passphrase;
     private Dictionary<string, JsonElement> _cache = new();
 
     public event EventHandler? SettingsChanged;
 
-    public ConfigurationService(string? filePath = null)
+    public ConfigurationService(string? filePath = null, string? passphrase = null)
     {
         _filePath = filePath ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".developer_geniue_config.json");
+        _passphrase = passphrase;
         if (File.Exists(_filePath))
         {
             _cache = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(File.ReadAllText(_filePath)) ?? new();
@@ -41,7 +43,15 @@ public class ConfigurationService : IConfigurationService
         await _lock.WaitAsync();
         try
         {
-            _cache[key] = JsonSerializer.SerializeToElement(value);
+            if (key.EndsWith("ApiKey", StringComparison.OrdinalIgnoreCase) && value is string str)
+            {
+                var encrypted = CryptoHelper.Encrypt(str, _passphrase);
+                _cache[key] = JsonSerializer.SerializeToElement(encrypted);
+            }
+            else
+            {
+                _cache[key] = JsonSerializer.SerializeToElement(value);
+            }
             await SaveAsync(_cache);
             SettingsChanged?.Invoke(this, EventArgs.Empty);
         }

@@ -9,11 +9,13 @@ namespace DeveloperGeniue.Core;
 public class DatabaseConfigurationService : IConfigurationService
 {
     private readonly string _connectionString;
+    private readonly string? _passphrase;
 
-    public DatabaseConfigurationService(string? databasePath = null)
+    public DatabaseConfigurationService(string? databasePath = null, string? passphrase = null)
     {
         var path = databasePath ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "geniue_config.db");
         _connectionString = $"Data Source={path}";
+        _passphrase = passphrase;
         EnsureDatabase();
     }
 
@@ -60,7 +62,16 @@ public class DatabaseConfigurationService : IConfigurationService
 
     public async Task SetSettingAsync<T>(string key, T value)
     {
-        var json = JsonSerializer.Serialize(value);
+        string json;
+        if (key.EndsWith("ApiKey", StringComparison.OrdinalIgnoreCase) && value is string str)
+        {
+            var encrypted = CryptoHelper.Encrypt(str, _passphrase);
+            json = JsonSerializer.Serialize(encrypted);
+        }
+        else
+        {
+            json = JsonSerializer.Serialize(value);
+        }
         using var connection = new SqliteConnection(_connectionString);
         await connection.OpenAsync();
         using var cmd = connection.CreateCommand();

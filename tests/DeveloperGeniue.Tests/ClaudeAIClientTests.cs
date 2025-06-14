@@ -30,10 +30,10 @@ public class ClaudeAIClientTests
     public async Task UsesApiKeyFromConfiguration()
     {
         var file = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        var config = new ConfigurationService(file);
+        var config = new ConfigurationService(file, "pass");
         await config.SetSettingAsync("ClaudeApiKey", "abc");
         var handler = new Handler();
-        var client = new ClaudeAIClient(config, new HttpClient(handler));
+        var client = new ClaudeAIClient(config, new HttpClient(handler), "pass");
 
         var result = await client.GetCompletionAsync(new AIRequest("hi", "Claude"));
 
