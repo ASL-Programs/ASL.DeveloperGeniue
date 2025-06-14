@@ -1,13 +1,26 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Logging;
 
 namespace DeveloperGeniue.Core;
 
 public class TestManager : ITestManager
 {
+    private readonly ILogger<TestManager> _logger;
+
+    public TestManager() : this(Microsoft.Extensions.Logging.Abstractions.NullLogger<TestManager>.Instance)
+    {
+    }
+
+    public TestManager(ILogger<TestManager> logger)
+    {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
+
     public async Task<TestResult> RunTestsAsync(string projectPath)
     {
+        _logger.LogInformation("Running tests for {ProjectPath}", projectPath);
         var startTime = DateTime.UtcNow;
         var process = new Process
         {
@@ -38,6 +51,7 @@ public class TestManager : ITestManager
         catch (Exception ex)
         {
             errors.AppendLine(ex.Message);
+            _logger.LogError(ex, "Tests failed to run for {ProjectPath}", projectPath);
             return new TestResult
             {
                 Success = false,
@@ -55,6 +69,7 @@ public class TestManager : ITestManager
         result.Duration = duration;
         result.Output = outputText;
         result.Errors = errorsText;
+        _logger.LogInformation("Test run completed with exit code {ExitCode} in {Duration}", process.ExitCode, duration);
         return result;
     }
 
